@@ -1,4 +1,4 @@
-# 🧠 RaceMind AI - The Autonomous Co-Driver
+# 🧠 KobayashiAI - The Autonomous Co-Driver
 
 **"Doesn't simulate the future—replays the past to conquer it."**
 
@@ -164,7 +164,7 @@ RaceMind AI processes **only** the provided Toyota GR Cup datasets:
 - **Demo**: Live race replay with 92% AI accuracy validation
 
 ### **Prize-Winning Deliverables:**
-- 🌐 **Live Demo**: [RaceMind AI Dashboard](https://gr-cup-racing-analytics.netlify.app)
+- 🌐 **Live Demo**: KobayashiAI Dashboard](https://gr-cup-racing-analytics.netlify.app)
 - 📹 **3-Min Video**: Race replay showing AI calls vs. real outcomes
 - 📊 **PDF Report**: 92% accuracy across 5 test races
 - 💻 **GitHub Repo**: Clean code with dataset samples
