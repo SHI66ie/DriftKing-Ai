@@ -75,3 +75,5 @@ temp/
 
 # Racing data (now loaded from trddev.com remotely)
 /Data/
+# Generated JSON files from CSV conversion
+/Data/json/
