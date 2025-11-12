@@ -8,8 +8,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "extract-zips": "node scripts/extract-all-zips.js",
     "convert-csv": "node scripts/convert-csv-to-json.js",
-    "convert-large-csv": "node scripts/convert-large-csv-to-json.js"
+    "convert-large-csv": "node scripts/convert-large-csv-to-json.js",
+    "convert-all": "npm run extract-zips && npm run convert-csv && npm run convert-large-csv"
   },
   "dependencies": {
     "@types/node": "^20.0.0",
