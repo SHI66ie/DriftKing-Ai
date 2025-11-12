@@ -1,11 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Car, Trophy, Zap, Target, Brain, Clock } from 'lucide-react'
 
 export default function HomePage() {
   const [selectedTrack, setSelectedTrack] = useState('cota')
   const [selectedRace, setSelectedRace] = useState('R1')
+  const router = useRouter()
 
   const tracks = [
     { id: 'barber', name: 'Barber Motorsports Park', location: 'Alabama' },
@@ -56,6 +58,7 @@ export default function HomePage() {
                 value={selectedTrack}
                 onChange={(e) => setSelectedTrack(e.target.value)}
                 className="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm"
+                title="Select Track"
               >
                 {tracks.map(track => (
                   <option key={track.id} value={track.id}>
@@ -67,6 +70,7 @@ export default function HomePage() {
                 value={selectedRace}
                 onChange={(e) => setSelectedRace(e.target.value)}
                 className="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm"
+                title="Select Race"
               >
                 <option value="R1">Race 1</option>
                 <option value="R2">Race 2</option>
@@ -88,10 +92,16 @@ export default function HomePage() {
             highlighting optimal decisions and validating them against actual race outcomes.
           </p>
           <div className="flex justify-center space-x-4">
-            <button className="bg-racing-red hover:bg-red-700 px-8 py-3 rounded-lg font-semibold transition-colors">
+            <button 
+              onClick={() => router.push('/dashboard')}
+              className="bg-racing-red hover:bg-red-700 px-8 py-3 rounded-lg font-semibold transition-colors"
+            >
               Start Race Replay
             </button>
-            <button className="border border-gray-600 hover:border-gray-400 px-8 py-3 rounded-lg font-semibold transition-colors">
+            <button 
+              onClick={() => router.push('/dashboard')}
+              className="border border-gray-600 hover:border-gray-400 px-8 py-3 rounded-lg font-semibold transition-colors"
+            >
               View Analytics
             </button>
           </div>
