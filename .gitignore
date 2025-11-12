@@ -72,3 +72,6 @@ temp/
 
 # Temporary extracted racing data
 *-temp/
+
+# Racing data (now loaded from trddev.com remotely)
+/Data/

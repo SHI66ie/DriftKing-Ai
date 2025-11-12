@@ -10,28 +10,37 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "^14.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "@types/node": "^20.0.0",
+    "@types/papaparse": "^5.3.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "typescript": "^5.0.0",
-    "tailwindcss": "^3.3.0",
+    "adm-zip": "^0.5.16",
     "autoprefixer": "^10.4.0",
-    "postcss": "^8.4.0",
-    "recharts": "^2.8.0",
-    "lucide-react": "^0.294.0",
-    "papaparse": "^5.4.1",
-    "@types/papaparse": "^5.3.0",
+    "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "class-variance-authority": "^0.7.0"
+    "lucide-react": "^0.294.0",
+    "next": "^14.0.0",
+    "papaparse": "^5.4.1",
+    "postcss": "^8.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.8.0",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5.0.0"
   },
   "devDependencies": {
+    "@types/adm-zip": "^0.5.7",
     "eslint": "^8.0.0",
     "eslint-config-next": "^14.0.0"
   },
-  "keywords": ["racing", "analytics", "toyota", "gr-cup", "dashboard", "hackathon"],
+  "keywords": [
+    "racing",
+    "analytics",
+    "toyota",
+    "gr-cup",
+    "dashboard",
+    "hackathon"
+  ],
   "author": "Hackathon Team",
   "license": "MIT"
 }
