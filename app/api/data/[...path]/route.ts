@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import AdmZip from 'adm-zip'
 
+// Disable Next.js caching for this route (ZIPs are too large)
+export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+
 // Map track names to their ZIP URLs
 const TRACK_ZIP_URLS: Record<string, string> = {
   'barber': 'https://trddev.com/hackathon-2025/barber-motorsports-park.zip',
