@@ -73,6 +73,7 @@ temp/
 # Temporary extracted racing data
 *-temp/
 
-# Racing data (now loaded from trddev.com remotely)
-# /Data/ - REMOVED to allow JSON commits
-# /Data/json/ - REMOVED to allow JSON commits
+# Racing data (hosted on Google Drive - 18+ GB)
+/Data/
+# Generated JSON files from CSV conversion
+/Data/json/
