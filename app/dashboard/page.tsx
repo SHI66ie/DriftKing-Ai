@@ -29,57 +29,34 @@ export default function DashboardPage() {
     setRaceData({ loading: true, error: null, data: [] })
     
     try {
-      // Map track IDs to their proper case for API paths
-      const trackMap: Record<string, string> = {
-        'barber': 'barber',
-        'cota': 'COTA',
-        'indianapolis': 'indianapolis',
-        'road-america': 'road-america',
-        'sebring': 'sebring',
-        'sonoma': 'Sonoma',
-        'vir': 'virginia-international-raceway'
+      // Load race data from local JSON files
+      const response = await fetch(`/api/race-data/${selectedTrack}/${selectedRace}`)
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to load data')
       }
       
-      const apiTrack = trackMap[selectedTrack] || selectedTrack
-      const raceNum = selectedRace === 'R1' ? '1' : '2'
+      const data = await response.json()
       
-      // Try to load race results from our API with proper path
-      const paths = [
-        `/api/data/${apiTrack}/Race ${raceNum}/03_GR Cup Race ${raceNum} Official Results.CSV`,
-        `/api/data/${apiTrack}/05_Results by Class GR Cup Race ${raceNum} Official_Anonymized.CSV`,
-        `/api/data/${apiTrack}/Race ${raceNum}/00_Results GR Cup Race ${raceNum} Official_Anonymized.CSV`
-      ]
+      console.log(`✓ Successfully loaded ${selectedTrack} ${selectedRace} data`)
+      console.log('Race Results:', data.raceResults ? `${data.raceResults.length} entries` : 'Not available')
+      console.log('Lap Times:', data.lapTimes ? `${data.lapTimes.length} laps` : 'Not available')
+      console.log('Weather:', data.weather ? 'Available' : 'Not available')
+      console.log('Telemetry:', data.telemetry.available ? `${data.telemetry.totalRows} rows` : 'Not available')
       
-      let success = false
-      let csvText = ''
-      
-      for (const path of paths) {
-        try {
-          console.log(`Trying to fetch: ${path}`)
-          const response = await fetch(path)
-          
-          if (response.ok) {
-            csvText = await response.text()
-            console.log(`✓ Successfully loaded from: ${path}`)
-            console.log('Data preview:', csvText.substring(0, 200) + '...')
-            success = true
-            break
-          }
-        } catch (e) {
-          console.log(`✗ Failed: ${path}`)
-        }
-      }
-      
-      if (success) {
-        setRaceData({ loading: false, error: null, data: [{ csvText }] })
-      } else {
-        throw new Error('No valid data paths found')
-      }
-    } catch (error) {
+      setRaceData({ 
+        loading: false, 
+        error: null, 
+        data: [data] 
+      })
+    } catch (error: any) {
       console.error('Error loading race data:', error)
       setRaceData({ 
         loading: false, 
-        error: `Data loading is in progress. The API is fetching ZIP files from trddev.com and extracting CSV data. This may take a moment on first load. Check browser console for details.`, 
+        error: error.message.includes('Google Drive') 
+          ? error.message 
+          : `Failed to load race data. Please ensure you have downloaded the data from Google Drive and placed it in the Data/ folder. See DATA.md for instructions.`,
         data: [] 
       })
     }
