@@ -12,8 +12,12 @@ This project uses **18+ GB** of Toyota GR Cup racing data, including:
 
 Due to the large size (18+ GB), the data is **NOT** stored in this Git repository. Instead, it's hosted on:
 
-### **Google Drive**
+### **Google Drive (Recommended)**
+- **Direct Integration**: The app can load data directly from Google Drive
 - **Download Link**: [Toyota GR Cup Data (18+ GB)](https://drive.google.com/drive/folders/1AvpoKZzY7CVtcSBX8wA7Oq8JfAWo-oou?usp=sharing)
+- **Setup**: Configure Google Drive API (see below) or download manually
+
+### **Local Storage (Alternative)**
 - Download the complete dataset from Google Drive
 - Extract/place files in the `Data/` folder of your local clone
 
@@ -36,6 +40,33 @@ Data/
 │   └── (CSV files if you extract from ZIPs)
 └── *.zip (original ZIP files)
 ```
+
+## 🔧 Google Drive API Setup (Recommended)
+
+To enable direct loading from Google Drive:
+
+### 1. **Get Google Drive API Key**
+1. Go to [Google Cloud Console](https://console.developers.google.com/)
+2. Create a new project or select existing one
+3. Enable **Google Drive API v3**
+4. Go to **Credentials** → **Create Credentials** → **API Key**
+5. Copy your API key
+
+### 2. **Configure Environment**
+1. Copy `.env.example` to `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
+2. Add your API key:
+   ```env
+   GOOGLE_DRIVE_API_KEY=your_actual_api_key_here
+   ```
+
+### 3. **Deploy with Google Drive**
+- ✅ **Netlify/Vercel**: Add environment variable in dashboard
+- ✅ **Local Development**: Use `.env.local` file
+- ✅ **No Downloads**: Data loads directly from Google Drive
+- ✅ **Always Updated**: Uses latest data from shared folder
 
 ## 🔄 Alternative: Convert from Source
 

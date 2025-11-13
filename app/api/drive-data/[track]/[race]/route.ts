@@ -1,0 +1,201 @@
+import { NextRequest, NextResponse } from 'next/server'
+
+// Disable caching for dynamic data
+export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+
+// Google Drive folder ID from the shared link
+const DRIVE_FOLDER_ID = '1AvpoKZzY7CVtcSBX8wA7Oq8JfAWo-oou'
+
+// Map track names to their folder names in Google Drive
+const TRACK_FOLDERS: Record<string, string> = {
+  'barber': 'barber',
+  'cota': 'COTA', 
+  'indianapolis': 'indianapolis',
+  'road-america': 'road-america',
+  'sebring': 'sebring',
+  'sonoma': 'sonoma',
+  'vir': 'virginia-international-raceway'
+}
+
+// Cache for Google Drive file listings
+const driveCache = new Map<string, any[]>()
+
+async function listGoogleDriveFiles(folderId: string): Promise<any[]> {
+  if (driveCache.has(folderId)) {
+    return driveCache.get(folderId)!
+  }
+
+  try {
+    // Use Google Drive API v3 to list files in the folder
+    const response = await fetch(
+      `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&key=${process.env.GOOGLE_DRIVE_API_KEY}&fields=files(id,name,mimeType,size)`,
+      {
+        headers: {
+          'Accept': 'application/json',
+        },
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(`Google Drive API error: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    driveCache.set(folderId, data.files || [])
+    return data.files || []
+  } catch (error) {
+    console.error('Error listing Google Drive files:', error)
+    return []
+  }
+}
+
+async function downloadGoogleDriveFile(fileId: string): Promise<string | null> {
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${process.env.GOOGLE_DRIVE_API_KEY}`,
+      {
+        headers: {
+          'Accept': 'application/json',
+        },
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(`Failed to download file: ${response.statusText}`)
+    }
+
+    return await response.text()
+  } catch (error) {
+    console.error('Error downloading Google Drive file:', error)
+    return null
+  }
+}
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { track: string; race: string } }
+) {
+  try {
+    const { track, race } = params
+    
+    // Check if Google Drive API key is configured
+    if (!process.env.GOOGLE_DRIVE_API_KEY) {
+      return NextResponse.json({
+        error: 'Google Drive API not configured',
+        message: 'Please set GOOGLE_DRIVE_API_KEY environment variable',
+        fallback: 'Download data manually from Google Drive'
+      }, { status: 503 })
+    }
+
+    const trackFolder = TRACK_FOLDERS[track] || track
+    console.log(`Loading race data for ${track} - ${race} from Google Drive`)
+
+    // List files in the main folder to find track subfolder
+    const mainFiles = await listGoogleDriveFiles(DRIVE_FOLDER_ID)
+    const trackFolderItem = mainFiles.find(file => 
+      file.name === trackFolder && file.mimeType === 'application/vnd.google-apps.folder'
+    )
+
+    if (!trackFolderItem) {
+      return NextResponse.json({
+        error: 'Track folder not found',
+        track: trackFolder,
+        availableFolders: mainFiles.filter(f => f.mimeType === 'application/vnd.google-apps.folder').map(f => f.name)
+      }, { status: 404 })
+    }
+
+    // List files in the track folder
+    const trackFiles = await listGoogleDriveFiles(trackFolderItem.id)
+    
+    // Find race results
+    const raceNum = race.slice(1) // "R1" -> "1"
+    const raceResultPatterns = [
+      `03_Results GR Cup Race ${raceNum} Official_Anonymized.json`,
+      `03_Provisional Results_Race ${raceNum}_Anonymized.json`,
+      `05_Results by Class GR Cup Race ${raceNum} Official_Anonymized.json`
+    ]
+    
+    let raceResults = null
+    for (const pattern of raceResultPatterns) {
+      const file = trackFiles.find(f => f.name === pattern)
+      if (file) {
+        const content = await downloadGoogleDriveFile(file.id)
+        if (content) {
+          raceResults = JSON.parse(content)
+          console.log(`✓ Loaded race results from Google Drive: ${pattern}`)
+          break
+        }
+      }
+    }
+
+    // Find lap times
+    const lapTimeFile = trackFiles.find(f => f.name === `${race}_${track}_lap_time.json`)
+    let lapTimes = null
+    if (lapTimeFile) {
+      const content = await downloadGoogleDriveFile(lapTimeFile.id)
+      if (content) {
+        lapTimes = JSON.parse(content)
+        console.log(`✓ Loaded lap times from Google Drive: ${lapTimes.length} entries`)
+      }
+    }
+
+    // Find weather data
+    const weatherPatterns = [
+      `26_Weather_Race ${raceNum}_Anonymized.json`,
+      `${race}_${track}_weather.json`
+    ]
+    
+    let weather = null
+    for (const pattern of weatherPatterns) {
+      const file = trackFiles.find(f => f.name === pattern)
+      if (file) {
+        const content = await downloadGoogleDriveFile(file.id)
+        if (content) {
+          weather = JSON.parse(content)
+          console.log(`✓ Loaded weather data from Google Drive: ${pattern}`)
+          break
+        }
+      }
+    }
+
+    // Find telemetry index
+    const telemetryIndexFile = trackFiles.find(f => f.name === `${race}_${track}_telemetry_data_index.json`)
+    let telemetryInfo = null
+    if (telemetryIndexFile) {
+      const content = await downloadGoogleDriveFile(telemetryIndexFile.id)
+      if (content) {
+        telemetryInfo = JSON.parse(content)
+        console.log(`✓ Telemetry available from Google Drive: ${telemetryInfo.totalRows} rows in ${telemetryInfo.totalChunks} chunks`)
+      }
+    }
+
+    return NextResponse.json({
+      track,
+      race,
+      source: 'Google Drive',
+      raceResults,
+      lapTimes,
+      weather,
+      telemetry: telemetryInfo ? {
+        available: true,
+        totalRows: telemetryInfo.totalRows,
+        totalChunks: telemetryInfo.totalChunks,
+        chunkSize: telemetryInfo.chunkSize,
+        source: 'Google Drive'
+      } : { available: false },
+      availableFiles: trackFiles.map(f => ({ name: f.name, size: f.size }))
+    })
+
+  } catch (error) {
+    console.error('Error loading data from Google Drive:', error)
+    return NextResponse.json(
+      { 
+        error: 'Failed to load data from Google Drive', 
+        details: String(error),
+        fallback: 'Try downloading data manually from Google Drive'
+      },
+      { status: 500 }
+    )
+  }
+}

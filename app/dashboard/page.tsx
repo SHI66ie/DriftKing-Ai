@@ -29,34 +29,48 @@ export default function DashboardPage() {
     setRaceData({ loading: true, error: null, data: [] })
     
     try {
-      // Load race data from local JSON files
-      const response = await fetch(`/api/race-data/${selectedTrack}/${selectedRace}`)
+      // Try Google Drive first, then fallback to local files
+      console.log(`🌐 Loading ${selectedTrack} ${selectedRace} data from Google Drive...`)
+      
+      let response = await fetch(`/api/drive-data/${selectedTrack}/${selectedRace}`)
+      let dataSource = 'Google Drive'
+      
+      // If Google Drive fails, try local files
+      if (!response.ok) {
+        console.log(`⚠️ Google Drive failed, trying local files...`)
+        response = await fetch(`/api/race-data/${selectedTrack}/${selectedRace}`)
+        dataSource = 'Local Files'
+      }
       
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.message || 'Failed to load data')
+        throw new Error(errorData.message || 'Failed to load data from both Google Drive and local files')
       }
       
       const data = await response.json()
       
-      console.log(`✓ Successfully loaded ${selectedTrack} ${selectedRace} data`)
-      console.log('Race Results:', data.raceResults ? `${data.raceResults.length} entries` : 'Not available')
-      console.log('Lap Times:', data.lapTimes ? `${data.lapTimes.length} laps` : 'Not available')
-      console.log('Weather:', data.weather ? 'Available' : 'Not available')
-      console.log('Telemetry:', data.telemetry.available ? `${data.telemetry.totalRows} rows` : 'Not available')
+      console.log(`✅ Successfully loaded ${selectedTrack} ${selectedRace} data from ${dataSource}`)
+      console.log('📊 Race Results:', data.raceResults ? `${data.raceResults.length} entries` : 'Not available')
+      console.log('⏱️ Lap Times:', data.lapTimes ? `${data.lapTimes.length} laps` : 'Not available')
+      console.log('🌤️ Weather:', data.weather ? 'Available' : 'Not available')
+      console.log('📈 Telemetry:', data.telemetry.available ? `${data.telemetry.totalRows} rows from ${data.telemetry.source || dataSource}` : 'Not available')
       
       setRaceData({ 
         loading: false, 
         error: null, 
-        data: [data] 
+        data: [{ ...data, dataSource }] 
       })
     } catch (error: any) {
-      console.error('Error loading race data:', error)
+      console.error('❌ Error loading race data:', error)
       setRaceData({ 
         loading: false, 
-        error: error.message.includes('Google Drive') 
-          ? error.message 
-          : `Failed to load race data. Please ensure you have downloaded the data from Google Drive and placed it in the Data/ folder. See DATA.md for instructions.`,
+        error: `Failed to load race data. 
+        
+🌐 Google Drive: Check API configuration
+📁 Local Files: Download data from Google Drive and place in Data/ folder
+🔗 Link: https://drive.google.com/drive/folders/1AvpoKZzY7CVtcSBX8wA7Oq8JfAWo-oou
+
+See DATA.md for detailed instructions.`,
         data: [] 
       })
     }
