@@ -12,14 +12,5 @@
 [functions]
   node_bundler = "esbuild"
 
-# Redirect all API routes to Next.js functions
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/___netlify-handler"
-  status = 200
-
-# Handle client-side routing
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# Next.js API routes are handled by the plugin automatically
+# Remove manual redirects to let the plugin manage routing
