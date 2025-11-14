@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Car, Trophy, Zap, Target, Brain, Clock, Play, Pause, BarChart3, Download } from 'lucide-react'
 import SetupGuide from '../components/SetupGuide'
+import AIToolsPanel from '../components/AIToolsPanel'
 
 interface RaceData {
   loading: boolean
@@ -399,6 +400,17 @@ DEMO DATA (Placeholder):
               )}
             </div>
           </>
+        )}
+
+        {/* AI Tools Panel */}
+        {raceData.data.length > 0 && (
+          <div className="mb-8">
+            <AIToolsPanel 
+              raceData={raceData.data[0]} 
+              track={selectedTrack} 
+              race={selectedRace} 
+            />
+          </div>
         )}
 
         {/* Generated Report Display */}

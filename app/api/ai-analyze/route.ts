@@ -104,19 +104,22 @@ Format: Use numbered lists and bullet points. Be specific with data.`
     // Use Gemini (FREE) or OpenAI
     if (useGemini && gemini) {
       try {
-        console.log('🆓 Using Gemini Flash (FREE)...')
-        const model = gemini.getGenerativeModel({ model: 'gemini-1.5-flash' })
+        console.log('🆓 Using Gemini 1.5 Pro (FREE)...')
+        // Try Pro first for better quality, fall back to Flash if needed
+        let model = gemini.getGenerativeModel({ model: 'gemini-1.5-pro' })
         
         const result = await model.generateContent({
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 1500
+            maxOutputTokens: 2000,
+            topP: 0.9,
+            topK: 40
           }
         })
         
         analysis = result.response.text() || 'No analysis generated'
-        modelUsed = 'gemini-1.5-flash (FREE)'
+        modelUsed = 'gemini-1.5-pro (FREE)'
         tokensUsed = result.response.usageMetadata?.totalTokenCount || 0
         
       } catch (geminiError: any) {
