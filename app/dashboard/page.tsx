@@ -16,6 +16,7 @@ export default function DashboardPage() {
   const [isReplaying, setIsReplaying] = useState(false)
   const [raceData, setRaceData] = useState<RaceData>({ loading: false, error: null, data: [] })
   const [workerStatus, setWorkerStatus] = useState<'checking' | 'online' | 'offline' | null>(null)
+  const [generatedReport, setGeneratedReport] = useState<string | null>(null)
 
   const tracks = [
     { id: 'barber', name: 'Barber Motorsports Park', location: 'Alabama', available: true },
@@ -127,6 +128,10 @@ Recommendations:
 
 This is a demo report. Full AI analysis coming soon!`
 
+    // Display report on dashboard
+    setGeneratedReport(report)
+
+    // Also download as file
     const blob = new Blob([report], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -291,6 +296,38 @@ This is a demo report. Full AI analysis coming soon!`
               )}
             </div>
           </>
+        )}
+
+        {/* Generated Report Display */}
+        {generatedReport && (
+          <div className="bg-gradient-to-br from-purple-900/20 to-blue-900/20 border border-purple-500/30 rounded-lg p-6 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-purple-400 text-lg flex items-center">
+                <BarChart3 className="w-5 h-5 mr-2" />
+                AI Analysis Report
+              </h3>
+              <button
+                onClick={() => setGeneratedReport(null)}
+                className="text-gray-400 hover:text-white text-sm"
+              >
+                ✕ Close
+              </button>
+            </div>
+            <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+              <pre className="text-sm text-gray-300 whitespace-pre-wrap font-mono">
+                {generatedReport}
+              </pre>
+            </div>
+            <div className="mt-4 flex items-center justify-end space-x-3">
+              <button
+                onClick={exportReport}
+                className="bg-racing-blue hover:bg-racing-blue/80 px-4 py-2 rounded text-sm flex items-center space-x-2"
+              >
+                <Download className="w-4 h-4" />
+                <span>Download Report</span>
+              </button>
+            </div>
+          </div>
         )}
 
         {/* Feature Cards */}
