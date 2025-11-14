@@ -17,6 +17,7 @@ export default function DashboardPage() {
   const [raceData, setRaceData] = useState<RaceData>({ loading: false, error: null, data: [] })
   const [workerStatus, setWorkerStatus] = useState<'checking' | 'online' | 'offline' | null>(null)
   const [generatedReport, setGeneratedReport] = useState<string | null>(null)
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false)
 
   const tracks = [
     { id: 'barber', name: 'Barber Motorsports Park', location: 'Alabama', available: true },
@@ -103,42 +104,110 @@ If this persists, check browser console for detailed error logs.`,
     }, 3000)
   }
 
-  const exportReport = () => {
-    const pdfDocs = raceData.data[0]?.pdfDocuments || []
-    const pdfSection = pdfDocs.length > 0 
-      ? `\n\nAvailable Reference Documents:\n${pdfDocs.map((pdf: any) => `- ${pdf.name} (${(pdf.size / 1024 / 1024).toFixed(2)} MB)`).join('\n')}`
-      : ''
-    
-    const report = `KobayashiAI Race Analysis Report
+  const exportReport = async () => {
+    if (!raceData.data[0]) {
+      alert('Please load race data first!')
+      return
+    }
+
+    setIsGeneratingReport(true)
+
+    try {
+      console.log('🤖 Requesting AI analysis...')
+      
+      // Call AI analysis endpoint
+      const response = await fetch('/api/ai-analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          raceResults: raceData.data[0].raceResults,
+          lapTimes: raceData.data[0].lapTimes,
+          weather: raceData.data[0].weather,
+          track: selectedTrack,
+          race: selectedRace
+        })
+      })
+
+      const result: any = await response.json()
+
+      if (!response.ok) {
+        console.error('❌ AI analysis error:', result)
+        // Fallback to demo report if AI fails
+        throw new Error(result.message || 'AI analysis failed')
+      }
+
+      const pdfDocs = raceData.data[0]?.pdfDocuments || []
+      const pdfSection = pdfDocs.length > 0 
+        ? `\n\nAvailable Reference Documents:\n${pdfDocs.map((pdf: any) => `- ${pdf.name} (${(pdf.size / 1024 / 1024).toFixed(2)} MB)`).join('\n')}`
+        : ''
+
+      // Build report with AI analysis
+      const report = `KobayashiAI Race Analysis Report
 Track: ${tracks.find(t => t.id === selectedTrack)?.name}
 Race: ${selectedRace}
 Generated: ${new Date().toLocaleString()}
-Data Source: ${raceData.data[0]?.source || 'Google Drive'}${pdfSection}
+Data Source: ${raceData.data[0]?.source || 'Google Drive'}
+AI Model: ${result.metadata?.model || 'GPT-4'}${pdfSection}
 
-AI Predictions:
+═══════════════════════════════════════════════════
+🤖 AI-POWERED ANALYSIS
+═══════════════════════════════════════════════════
+
+${result.analysis}
+
+═══════════════════════════════════════════════════
+Powered by RaceMind AI | Tokens Used: ${result.metadata?.tokensUsed || 'N/A'}
+═══════════════════════════════════════════════════`
+
+      console.log('✅ AI report generated successfully')
+
+      // Display report on dashboard
+      setGeneratedReport(report)
+
+      // Also download as file
+      const blob = new Blob([report], { type: 'text/plain' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `KobayashiAI_${selectedTrack}_${selectedRace}_AI_Report.txt`
+      a.click()
+      URL.revokeObjectURL(url)
+
+    } catch (error: any) {
+      console.error('❌ Report generation error:', error)
+      
+      // Fallback to demo report
+      const report = `KobayashiAI Race Analysis Report
+Track: ${tracks.find(t => t.id === selectedTrack)?.name}
+Race: ${selectedRace}
+Generated: ${new Date().toLocaleString()}
+
+⚠️ AI Analysis Unavailable
+${error.message || 'Could not connect to AI service'}
+
+To enable AI analysis:
+1. Get an OpenAI API key from https://platform.openai.com/api-keys
+2. Create .env.local file in project root
+3. Add: OPENAI_API_KEY=your-key-here
+4. Restart the development server
+
+DEMO DATA (Placeholder):
 - 3-lap hindsight analysis: 92% accuracy
 - Strategy validation: Pit window optimal at lap 15
-- Tire degradation: Medium compound recommended
-- Weather impact: Minimal (dry conditions)
+- Tire degradation: Medium compound recommended`
 
-Recommendations:
-1. Brake 2m earlier in sector 3.b for 0.3s gain
-2. Optimize racing line through turn 12
-3. Consider early pit strategy for track position
-
-This is a demo report. Full AI analysis coming soon!`
-
-    // Display report on dashboard
-    setGeneratedReport(report)
-
-    // Also download as file
-    const blob = new Blob([report], { type: 'text/plain' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `KobayashiAI_${selectedTrack}_${selectedRace}_report.txt`
-    a.click()
-    URL.revokeObjectURL(url)
+      setGeneratedReport(report)
+      
+      const blob = new Blob([report], { type: 'text/plain' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `KobayashiAI_${selectedTrack}_${selectedRace}_report.txt`
+      a.click()
+      URL.revokeObjectURL(url)
+    } finally {
+      setIsGeneratingReport(false)
+    }
   }
 
   return (
@@ -203,10 +272,20 @@ This is a demo report. Full AI analysis coming soon!`
 
             <button 
               onClick={exportReport}
-              className="bg-racing-blue hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center space-x-2"
+              disabled={isGeneratingReport || raceData.data.length === 0}
+              className="bg-racing-blue hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Download className="w-5 h-5" />
-              <span>Export Report</span>
+              {isGeneratingReport ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <span>Generating AI Report...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-5 h-5" />
+                  <span>Generate AI Report</span>
+                </>
+              )}
             </button>
           </div>
         </div>
