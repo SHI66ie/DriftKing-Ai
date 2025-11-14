@@ -18,12 +18,12 @@ export default function DashboardPage() {
 
   const tracks = [
     { id: 'barber', name: 'Barber Motorsports Park', location: 'Alabama', available: true },
-    { id: 'cota', name: 'Circuit of the Americas', location: 'Texas', available: false },
-    { id: 'indianapolis', name: 'Indianapolis Motor Speedway', location: 'Indiana', available: false },
-    { id: 'road-america', name: 'Road America', location: 'Wisconsin', available: false },
-    { id: 'sebring', name: 'Sebring International Raceway', location: 'Florida', available: false },
-    { id: 'sonoma', name: 'Sonoma Raceway', location: 'California', available: false },
-    { id: 'vir', name: 'Virginia International Raceway', location: 'Virginia', available: false }
+    { id: 'cota', name: 'Circuit of the Americas', location: 'Texas', available: true },
+    { id: 'indianapolis', name: 'Indianapolis Motor Speedway', location: 'Indiana', available: true },
+    { id: 'road-america', name: 'Road America', location: 'Wisconsin', available: true },
+    { id: 'sebring', name: 'Sebring International Raceway', location: 'Florida', available: true },
+    { id: 'sonoma', name: 'Sonoma Raceway', location: 'California', available: true },
+    { id: 'vir', name: 'Virginia International Raceway', location: 'Virginia', available: true }
   ]
 
   const loadRaceData = async () => {
