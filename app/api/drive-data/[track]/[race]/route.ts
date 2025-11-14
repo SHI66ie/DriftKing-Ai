@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
 export const runtime = 'nodejs'
 
-// Cloudflare Worker proxy URL
+// Cloudflare Worker proxy URL (update if different)
 const DRIVE_PROXY_URL = 'https://drive-proxy.blockmusic.workers.dev'
 const DRIVE_FOLDER_ID = '1AvpoKZzY7CVtcSBX8wA7Oq8JfAWo-oou'
 
