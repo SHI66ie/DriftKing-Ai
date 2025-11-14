@@ -162,7 +162,7 @@ export async function GET(
         raceResultsFile = {
           name: file.name,
           id: file.id,
-          downloadUrl: `${DRIVE_PROXY_URL}/download/${file.id}`
+          downloadUrl: `/api/download/${file.id}` // Use Next.js proxy to avoid CORS
         }
         console.log(`✓ Found race results file: ${file.name}`)
         break
@@ -183,7 +183,7 @@ export async function GET(
         lapTimesFile = {
           name: file.name,
           id: file.id,
-          downloadUrl: `${DRIVE_PROXY_URL}/download/${file.id}`
+          downloadUrl: `/api/download/${file.id}` // Use Next.js proxy to avoid CORS
         }
         console.log(`✓ Found lap times file: ${file.name}`)
         break
@@ -202,7 +202,7 @@ export async function GET(
       weatherFile = {
         name: weatherFileMatch.name,
         id: weatherFileMatch.id,
-        downloadUrl: `${DRIVE_PROXY_URL}/download/${weatherFileMatch.id}`
+        downloadUrl: `/api/download/${weatherFileMatch.id}` // Use Next.js proxy to avoid CORS
       }
       console.log(`✓ Found weather data file: ${weatherFileMatch.name}`)
     }
@@ -214,7 +214,7 @@ export async function GET(
       telemetryFile = {
         name: telemetryIndexFileMatch.name,
         id: telemetryIndexFileMatch.id,
-        downloadUrl: `${DRIVE_PROXY_URL}/download/${telemetryIndexFileMatch.id}`
+        downloadUrl: `/api/download/${telemetryIndexFileMatch.id}` // Use Next.js proxy to avoid CORS
       }
       console.log(`✓ Found telemetry index file: ${telemetryIndexFileMatch.name}`)
     }
@@ -237,7 +237,7 @@ export async function GET(
         name: f.name,
         size: f.size,
         id: f.id,
-        downloadUrl: `${DRIVE_PROXY_URL}/download/${f.id}`
+        downloadUrl: `/api/download/${f.id}` // Use Next.js proxy to avoid CORS
       })),
       availableFiles: trackFiles.map(f => ({ name: f.name, size: f.size }))
     })
