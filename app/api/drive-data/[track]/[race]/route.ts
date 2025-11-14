@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 // Disable caching for dynamic data
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
+export const runtime = 'nodejs'
 
 // Cloudflare Worker proxy URL
 const DRIVE_PROXY_URL = 'https://drive-proxy.blockmusic.workers.dev'

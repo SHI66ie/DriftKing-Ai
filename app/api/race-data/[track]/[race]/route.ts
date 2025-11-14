@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
 
-// Disable caching
+// Disable caching for dynamic data
 export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+export const runtime = 'nodejs'
 
 // Map track IDs to folder names
 const TRACK_FOLDERS: Record<string, string> = {
