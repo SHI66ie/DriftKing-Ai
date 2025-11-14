@@ -26,23 +26,39 @@ const driveCache = new Map<string, any[]>()
 
 async function listGoogleDriveFiles(folderId: string): Promise<any[]> {
   if (driveCache.has(folderId)) {
+    console.log(`📦 Cache hit for folder: ${folderId}`)
     return driveCache.get(folderId)!
   }
 
   try {
     // Use Cloudflare Worker proxy to list files
-    const response = await fetch(`${DRIVE_PROXY_URL}/list?folderId=${folderId}`)
+    const url = `${DRIVE_PROXY_URL}/list?folderId=${folderId}`
+    console.log(`🔍 Fetching from worker: ${url}`)
+    
+    // Add 8-second timeout to prevent serverless function timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 8000)
+    
+    const response = await fetch(url, { signal: controller.signal })
+    clearTimeout(timeoutId)
+    console.log(`📡 Worker response status: ${response.status} ${response.statusText}`)
 
     if (!response.ok) {
-      throw new Error(`Drive proxy error: ${response.statusText}`)
+      const errorText = await response.text()
+      console.error(`❌ Worker error response: ${errorText}`)
+      throw new Error(`Drive proxy error: ${response.statusText} - ${errorText}`)
     }
 
     const data: any = await response.json()
+    console.log(`📂 Worker returned ${data.files?.length || 0} items for folder ${folderId}`)
+    console.log(`📋 Items:`, JSON.stringify(data.files?.map((f: any) => ({ name: f.name, type: f.mimeType })) || [], null, 2))
+    
     driveCache.set(folderId, data.files || [])
     return data.files || []
   } catch (error) {
-    console.error('Error listing Google Drive files:', error)
-    return []
+    console.error('❌ Error listing Google Drive files:', error)
+    console.error('Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error)))
+    throw error // Propagate the error instead of returning empty array
   }
 }
 
