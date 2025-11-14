@@ -106,56 +106,101 @@ export async function GET(
     }
 
     // List files in the track folder
-    const trackFiles = await listGoogleDriveFiles(trackFolderItem.id)
+    let trackFiles = await listGoogleDriveFiles(trackFolderItem.id)
     
-    // Find race results
+    // Check if we need to go one level deeper (nested folder structure)
+    const hasJsonFiles = trackFiles.some(f => f.name?.endsWith('.json'))
+    if (!hasJsonFiles) {
+      console.log(`📂 No JSON files found directly, checking for nested folders...`)
+      
+      // First, try to find a race-specific folder (e.g., "Race 1b", "Race 2b" for COTA)
+      const raceNum = race.slice(1) // "R1" -> "1"
+      const raceSpecificFolder = trackFiles.find(f => 
+        f.mimeType === 'application/vnd.google-apps.folder' && 
+        f.name.toLowerCase().includes(`race ${raceNum}`)
+      )
+      
+      if (raceSpecificFolder) {
+        console.log(`📁 Found race-specific folder: ${raceSpecificFolder.name}`)
+        trackFiles = await listGoogleDriveFiles(raceSpecificFolder.id)
+      } else {
+        // Otherwise, look for a subfolder with similar name to track
+        const nestedFolder = trackFiles.find(f => 
+          f.mimeType === 'application/vnd.google-apps.folder' && 
+          (f.name.toLowerCase().includes(trackFolder.toLowerCase()) || 
+           f.name.toLowerCase() === trackFolder.toLowerCase())
+        )
+        
+        if (nestedFolder) {
+          console.log(`📁 Found nested folder: ${nestedFolder.name}`)
+          trackFiles = await listGoogleDriveFiles(nestedFolder.id)
+        } else {
+          console.log(`⚠️ Available items in folder:`, trackFiles.map(f => ({ name: f.name, type: f.mimeType })))
+        }
+      }
+    }
+    
+    // Find race results (flexible search)
     const raceNum = race.slice(1) // "R1" -> "1"
-    const raceResultPatterns = [
-      `03_Results GR Cup Race ${raceNum} Official_Anonymized.json`,
-      `03_Provisional Results_Race ${raceNum}_Anonymized.json`,
-      `05_Results by Class GR Cup Race ${raceNum} Official_Anonymized.json`
+    let raceResults = null
+    
+    // Try multiple naming patterns
+    const resultKeywords = [
+      `GR Cup Race ${raceNum} Official`,
+      `Race ${raceNum} Official Results`,
+      `Results GR Cup Race ${raceNum}`,
+      `Provisional Results_Race ${raceNum}`,
+      `race ${raceNum}` // Fallback for simple patterns
     ]
     
-    let raceResults = null
-    for (const pattern of raceResultPatterns) {
-      const file = trackFiles.find(f => f.name === pattern)
+    for (const keyword of resultKeywords) {
+      const file = trackFiles.find(f => 
+        f.name?.toLowerCase().includes(keyword.toLowerCase()) && 
+        f.name?.endsWith('.json')
+      )
       if (file) {
         const content = await downloadGoogleDriveFile(file.id)
         if (content) {
           raceResults = JSON.parse(content)
-          console.log(`✓ Loaded race results from Google Drive: ${pattern}`)
+          console.log(`✓ Loaded race results from Google Drive: ${file.name}`)
           break
         }
       }
     }
 
-    // Find lap times
-    const lapTimeFile = trackFiles.find(f => f.name === `${race}_${track}_lap_time.json`)
+    // Find lap times (flexible search)
     let lapTimes = null
-    if (lapTimeFile) {
-      const content = await downloadGoogleDriveFile(lapTimeFile.id)
-      if (content) {
-        lapTimes = JSON.parse(content)
-        console.log(`✓ Loaded lap times from Google Drive: ${lapTimes.length} entries`)
+    const lapKeywords = [`${race}_${track}_lap`, `${race.toLowerCase()}_`, `lap_end`, `lap_time`]
+    
+    for (const keyword of lapKeywords) {
+      const lapTimeFile = trackFiles.find(f => 
+        f.name?.toLowerCase().includes(keyword.toLowerCase()) &&
+        f.name?.toLowerCase().includes('lap') &&
+        f.name?.endsWith('.json')
+      )
+      if (lapTimeFile) {
+        const content = await downloadGoogleDriveFile(lapTimeFile.id)
+        if (content) {
+          lapTimes = JSON.parse(content)
+          console.log(`✓ Loaded lap times from Google Drive: ${lapTimeFile.name}`)
+          break
+        }
       }
     }
 
-    // Find weather data
-    const weatherPatterns = [
-      `26_Weather_Race ${raceNum}_Anonymized.json`,
-      `${race}_${track}_weather.json`
-    ]
-    
+    // Find weather data (flexible search)
     let weather = null
-    for (const pattern of weatherPatterns) {
-      const file = trackFiles.find(f => f.name === pattern)
-      if (file) {
-        const content = await downloadGoogleDriveFile(file.id)
-        if (content) {
-          weather = JSON.parse(content)
-          console.log(`✓ Loaded weather data from Google Drive: ${pattern}`)
-          break
-        }
+    const weatherFile = trackFiles.find(f => 
+      f.name?.toLowerCase().includes('weather') &&
+      (f.name?.toLowerCase().includes(`race ${raceNum}`) || f.name?.toLowerCase().includes(race.toLowerCase())) &&
+      f.name?.endsWith('.json')
+    )
+    
+    if (weatherFile) {
+      const content = await downloadGoogleDriveFile(weatherFile.id)
+      if (content) {
+        weather = JSON.parse(content)
+        console.log(`✓ Loaded weather data from Google Drive: ${weatherFile.name}`)
       }
     }
 
