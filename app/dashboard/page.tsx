@@ -44,7 +44,7 @@ export default function DashboardPage() {
       }
       
       if (!response.ok) {
-        const errorData = await response.json()
+        const errorData: any = await response.json()
         throw new Error(errorData.message || 'Failed to load data from both Google Drive and local files')
       }
       
