@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('🤖 Initializing Autonomous Racing AI System...')
-    const model = gemini.getGenerativeModel({ model: 'gemini-1.5-pro' })
+    const model = gemini.getGenerativeModel({ model: 'gemini-1.5-flash-latest' })
 
     // Create autonomous driving context inspired by research papers
     const autonomousContext = `

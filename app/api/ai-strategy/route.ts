@@ -32,8 +32,8 @@ export async function POST(request: NextRequest) {
       }, { status: 503 })
     }
 
-    console.log('⚙️ Using Gemini Pro for strategy optimization...')
-    const model = gemini.getGenerativeModel({ model: 'gemini-1.5-pro' })
+    console.log('⚙️ Using Gemini Flash for strategy optimization...')
+    const model = gemini.getGenerativeModel({ model: 'gemini-1.5-flash-latest' })
 
     const prompt = `You are a Toyota GR Cup race strategist. Optimize race strategy:
 
@@ -82,7 +82,7 @@ Provide data-driven, specific recommendations with confidence levels.`
       success: true,
       strategy,
       metadata: {
-        model: 'gemini-1.5-pro',
+        model: 'gemini-1.5-flash-latest',
         track,
         tokensUsed: result.response.usageMetadata?.totalTokenCount || 0,
         generatedAt: new Date().toISOString()

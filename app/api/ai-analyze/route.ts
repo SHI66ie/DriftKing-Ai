@@ -244,9 +244,9 @@ Format: Use numbered lists and bullet points. Be specific with data.`
     // Use Gemini (FREE) if custom LLM failed or not available
     if (!analysis && useGemini && gemini) {
       try {
-        console.log('🆓 Using Gemini 1.5 Pro (FREE)...')
-        // Try Pro first for better quality, fall back to Flash if needed
-        let model = gemini.getGenerativeModel({ model: 'gemini-1.5-pro' })
+        console.log('🆓 Using Gemini 1.5 Flash (FREE)...')
+        // Using Flash model (stable and supported)
+        let model = gemini.getGenerativeModel({ model: 'gemini-1.5-flash-latest' })
         
         const result = await model.generateContent({
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
@@ -259,7 +259,7 @@ Format: Use numbered lists and bullet points. Be specific with data.`
         })
         
         analysis = result.response.text() || 'No analysis generated'
-        modelUsed = 'gemini-1.5-pro (FREE)'
+        modelUsed = 'gemini-1.5-flash-latest (FREE)'
         tokensUsed = result.response.usageMetadata?.totalTokenCount || 0
         
       } catch (geminiError: any) {

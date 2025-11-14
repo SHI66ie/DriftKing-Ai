@@ -32,8 +32,8 @@ export async function POST(request: NextRequest) {
       }, { status: 503 })
     }
 
-    console.log('🧠 Using Gemini Pro for multimodal racing analysis...')
-    const model = gemini.getGenerativeModel({ model: 'gemini-1.5-pro' })
+    console.log('🧠 Using Gemini Flash for multimodal racing analysis...')
+    const model = gemini.getGenerativeModel({ model: 'gemini-1.5-flash-latest' })
 
     // Create comprehensive racing context
     const racingContext = `
