@@ -75,9 +75,13 @@ temp/
 *-temp/
 
 # Racing data (hosted on Google Drive - 18+ GB)
-/Data/
-# Generated JSON files from CSV conversion
-/Data/json/
+# (raw files are stored outside the repo; processed JSON under /Data is tracked)
+
+# Exclude large telemetry files from Git (keep locally)
+Data/**/*telemetry*.json
+Data/**/R*_*_telemetry_data.json
+Data/**/R*_*_lap_*.json
+
 
 # Cloudflare Worker (deployed separately)
 /drive-proxy/
