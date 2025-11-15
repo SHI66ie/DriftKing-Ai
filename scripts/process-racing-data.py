@@ -19,6 +19,8 @@ if sys.platform == 'win32':
     sys.stderr.reconfigure(encoding='utf-8')
 
 # Configuration
+PROCESS_ALL_TRACKS = True
+
 ZIP_FILES = [
     r"C:\Users\DELL\Documents\toyotahcak\Data\indianapolis.zip",
     r"C:\Users\DELL\Documents\toyotahcak\Data\road-america.zip",
@@ -206,24 +208,26 @@ def main():
     # Create output directory
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     
-    # Process first ZIP as test
-    if ZIP_FILES:
-        print("\n🧪 TEST MODE: Processing first track only...")
-        print("   (Review results before processing all tracks)")
-        
-        test_zip = ZIP_FILES[0]
-        processed = process_track(test_zip, OUTPUT_DIR)
-        
-        print("\n" + "=" * 60)
-        print("✨ TEST COMPLETE!")
-        print("=" * 60)
-        print(f"📁 Check output in: {OUTPUT_DIR}")
-        print(f"🔍 Review the files, then run process_all_tracks() to continue")
-        print("\n💡 To process all tracks, uncomment the loop at the end of this script")
-        
-        return processed
+    if not ZIP_FILES:
+        print("No ZIP files configured")
+        return []
+
+    if PROCESS_ALL_TRACKS:
+        return process_all_tracks()
+
+    # Default: process first track only (test mode)
+    print("\n🧪 TEST MODE: Processing first track only...")
+    print("   (Set PROCESS_ALL_TRACKS = True to run everything)")
+    test_zip = ZIP_FILES[0]
+    processed = process_track(test_zip, OUTPUT_DIR)
     
-    return []
+    print("\n" + "=" * 60)
+    print("✨ TEST COMPLETE!")
+    print("=" * 60)
+    print(f"📁 Check output in: {OUTPUT_DIR}")
+    print("\n💡 Toggle PROCESS_ALL_TRACKS to process the rest")
+    
+    return processed
 
 def process_all_tracks():
     """Process all tracks (call this after reviewing test results)"""
@@ -244,8 +248,4 @@ def process_all_tracks():
     return all_processed
 
 if __name__ == "__main__":
-    # Run test on first track
     processed_files = main()
-    
-    # Uncomment below to process all tracks after reviewing test results:
-    # processed_files = process_all_tracks()

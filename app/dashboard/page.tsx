@@ -23,6 +23,7 @@ export default function DashboardPage() {
   const [workerStatus, setWorkerStatus] = useState<'checking' | 'online' | 'offline' | null>(null)
   const [generatedReport, setGeneratedReport] = useState<string | null>(null)
   const [isGeneratingReport, setIsGeneratingReport] = useState(false)
+  const [simulatedWeather, setSimulatedWeather] = useState<any>(null)
 
   const tracks = [
     { id: 'barber', name: 'Barber Motorsports Park', location: 'Alabama', available: true },
@@ -412,7 +413,8 @@ DEMO DATA (Placeholder):
             <AIToolsPanel 
               raceData={raceData.data[0]} 
               track={selectedTrack} 
-              race={selectedRace} 
+              race={selectedRace}
+              simulatedWeather={simulatedWeather}
             />
           </div>
         )}
@@ -423,7 +425,8 @@ DEMO DATA (Placeholder):
             <AdvancedAIPanel 
               raceData={raceData.data[0]} 
               track={selectedTrack} 
-              race={selectedRace} 
+              race={selectedRace}
+              simulatedWeather={simulatedWeather}
             />
           </div>
         )}
@@ -459,9 +462,36 @@ DEMO DATA (Placeholder):
         <div className="mb-8">
           <WeatherControls
             initialWeather={raceData.data[0]?.weather}
-            onWeatherChange={(weather) => console.log('Weather changed:', weather)}
+            onWeatherChange={(weather) => {
+              setSimulatedWeather(weather)
+              console.log('🌤️ Weather simulation updated:', weather)
+            }}
           />
         </div>
+
+        {/* Weather Simulation Notice */}
+        {simulatedWeather && (
+          <div className="mb-8 bg-gradient-to-r from-purple-900/30 to-blue-900/30 border border-purple-500/50 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                <div>
+                  <p className="text-sm font-semibold text-purple-300">Weather Simulation Active</p>
+                  <p className="text-xs text-gray-400">
+                    AI predictions will use: {simulatedWeather.airTemp}°C air, {simulatedWeather.trackTemp}°C track, 
+                    {simulatedWeather.humidity}% humidity{simulatedWeather.rain ? ', Rain' : ''}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSimulatedWeather(null)}
+                className="text-xs text-gray-400 hover:text-white px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
+              >
+                Reset to Actual
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Generated Report Display */}
         {generatedReport && (

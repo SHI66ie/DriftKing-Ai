@@ -144,6 +144,8 @@ export default function WeatherControls({ initialWeather, onWeatherChange }: Wea
             value={weather.airTemp}
             onChange={(e) => updateWeather('airTemp', Number(e.target.value))}
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+            aria-label="Air Temperature"
+            title="Adjust air temperature"
           />
           <div className="flex justify-between text-xs text-gray-500 mt-1">
             <span>-10°C</span>
@@ -167,6 +169,8 @@ export default function WeatherControls({ initialWeather, onWeatherChange }: Wea
             value={weather.trackTemp}
             onChange={(e) => updateWeather('trackTemp', Number(e.target.value))}
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+            aria-label="Track Temperature"
+            title="Adjust track temperature"
           />
           <div className="flex justify-between text-xs text-gray-500 mt-1">
             <span>0°C</span>
@@ -190,6 +194,8 @@ export default function WeatherControls({ initialWeather, onWeatherChange }: Wea
             value={weather.humidity}
             onChange={(e) => updateWeather('humidity', Number(e.target.value))}
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+            aria-label="Humidity"
+            title="Adjust humidity level"
           />
           <div className="flex justify-between text-xs text-gray-500 mt-1">
             <span>0%</span>
@@ -213,6 +219,8 @@ export default function WeatherControls({ initialWeather, onWeatherChange }: Wea
             value={weather.windSpeed}
             onChange={(e) => updateWeather('windSpeed', Number(e.target.value))}
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+            aria-label="Wind Speed"
+            title="Adjust wind speed"
           />
           <div className="flex justify-between text-xs text-gray-500 mt-1">
             <span>0 m/s</span>
@@ -236,6 +244,8 @@ export default function WeatherControls({ initialWeather, onWeatherChange }: Wea
             value={weather.windDirection}
             onChange={(e) => updateWeather('windDirection', Number(e.target.value))}
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+            aria-label="Wind Direction"
+            title="Adjust wind direction"
           />
           <div className="flex justify-between text-xs text-gray-500 mt-1">
             <span>0°</span>
@@ -259,6 +269,8 @@ export default function WeatherControls({ initialWeather, onWeatherChange }: Wea
             value={weather.pressure}
             onChange={(e) => updateWeather('pressure', Number(e.target.value))}
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+            aria-label="Atmospheric Pressure"
+            title="Adjust atmospheric pressure"
           />
           <div className="flex justify-between text-xs text-gray-500 mt-1">
             <span>950 hPa</span>
@@ -282,6 +294,8 @@ export default function WeatherControls({ initialWeather, onWeatherChange }: Wea
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
               weather.rain ? 'bg-racing-blue' : 'bg-gray-600'
             }`}
+            aria-label="Toggle rain conditions"
+            title={weather.rain ? 'Disable rain' : 'Enable rain'}
           >
             <span
               className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${

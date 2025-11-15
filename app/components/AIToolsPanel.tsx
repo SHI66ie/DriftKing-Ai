@@ -7,9 +7,10 @@ interface AIToolsPanelProps {
   raceData: any
   track: string
   race: string
+  simulatedWeather?: any
 }
 
-export default function AIToolsPanel({ raceData, track, race }: AIToolsPanelProps) {
+export default function AIToolsPanel({ raceData, track, race, simulatedWeather }: AIToolsPanelProps) {
   const [activeTab, setActiveTab] = useState<'predict' | 'coach' | 'strategy'>('predict')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<any>(null)
@@ -17,6 +18,7 @@ export default function AIToolsPanel({ raceData, track, race }: AIToolsPanelProp
   const runPrediction = async () => {
     setLoading(true)
     try {
+      const weatherData = simulatedWeather || raceData?.weather || {}
       const response = await fetch('/api/ai-predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -24,8 +26,9 @@ export default function AIToolsPanel({ raceData, track, race }: AIToolsPanelProp
           lapTimes: raceData?.lapTimes || [],
           currentLap: 15,
           driverData: { name: 'Driver 1', position: 3 },
-          weather: raceData?.weather || {},
-          track
+          weather: weatherData,
+          track,
+          isSimulated: !!simulatedWeather
         })
       })
       const data = await response.json()
@@ -40,15 +43,17 @@ export default function AIToolsPanel({ raceData, track, race }: AIToolsPanelProp
   const runCoaching = async () => {
     setLoading(true)
     try {
+      const weatherData = simulatedWeather || raceData?.weather || {}
       const response = await fetch('/api/ai-coach', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          driverName: 'Driver 1',
           lapTimes: raceData?.lapTimes || [],
-          raceResults: raceData?.raceResults || [],
-          telemetry: raceData?.telemetry || null,
-          track
+          telemetry: raceData?.telemetry || [],
+          weather: weatherData,
+          track,
+          race,
+          isSimulated: !!simulatedWeather
         })
       })
       const data = await response.json()
@@ -63,17 +68,18 @@ export default function AIToolsPanel({ raceData, track, race }: AIToolsPanelProp
   const runStrategy = async () => {
     setLoading(true)
     try {
+      const weatherData = simulatedWeather || raceData?.weather || {}
       const response = await fetch('/api/ai-strategy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          raceResults: raceData?.raceResults || [],
-          lapTimes: raceData?.lapTimes || [],
-          weather: raceData?.weather || {},
-          track,
-          raceDuration: '45 minutes',
-          tireCompound: 'Medium',
-          fuelLoad: 'Full'
+          raceData: {
+            lapTimes: raceData?.lapTimes || [],
+            weather: weatherData,
+            track,
+            race
+          },
+          isSimulated: !!simulatedWeather
         })
       })
       const data = await response.json()

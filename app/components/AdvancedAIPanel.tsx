@@ -7,9 +7,10 @@ interface AdvancedAIPanelProps {
   raceData: any
   track: string
   race: string
+  simulatedWeather?: any
 }
 
-export default function AdvancedAIPanel({ raceData, track, race }: AdvancedAIPanelProps) {
+export default function AdvancedAIPanel({ raceData, track, race, simulatedWeather }: AdvancedAIPanelProps) {
   const [activeMode, setActiveMode] = useState<'multimodal' | 'autonomous' | 'safety'>('multimodal')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<any>(null)
@@ -17,6 +18,7 @@ export default function AdvancedAIPanel({ raceData, track, race }: AdvancedAIPan
   const runMultimodalAnalysis = async (analysisType: string) => {
     setLoading(true)
     try {
+      const weatherData = simulatedWeather || raceData?.weather || {}
       const response = await fetch('/api/ai-multimodal', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -28,7 +30,8 @@ export default function AdvancedAIPanel({ raceData, track, race }: AdvancedAIPan
             surface: 'Asphalt',
             length: '4.2km'
           },
-          weatherData: raceData?.weather || {},
+          weatherData,
+          isSimulated: !!simulatedWeather,
           driverBehavior: {
             brakingStyle: 'Aggressive',
             corneringStyle: 'Late Apex',
@@ -58,10 +61,13 @@ export default function AdvancedAIPanel({ raceData, track, race }: AdvancedAIPan
   const runAutonomousAnalysis = async (mode: string) => {
     setLoading(true)
     try {
+      const weatherData = simulatedWeather || raceData?.weather || {}
       const response = await fetch('/api/ai-autonomous', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          weather: weatherData,
+          isSimulated: !!simulatedWeather,
           sensorData: {
             lidar: true,
             camera: true,
