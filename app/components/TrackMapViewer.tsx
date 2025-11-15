@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { MapPin, Download, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react'
+import './track-map-viewer.css'
 
 interface TrackMapViewerProps {
   track: string
@@ -29,6 +30,8 @@ export default function TrackMapViewer({ track, pdfUrl, mapData }: TrackMapViewe
     'sonoma': 'Sonoma Raceway',
     'vir': 'Virginia International Raceway'
   }
+
+  const zoomClass = `zoom-${zoom}`
 
   return (
     <div className="bg-gray-800/50 rounded-lg border border-gray-700 overflow-hidden">
@@ -80,7 +83,7 @@ export default function TrackMapViewer({ track, pdfUrl, mapData }: TrackMapViewe
         {/* Map Display */}
         <div className="lg:col-span-2 bg-gray-900/50 rounded-lg p-4 min-h-[400px] flex items-center justify-center overflow-auto">
           {pdfUrl ? (
-            <div style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'center' }}>
+            <div className={`track-map-zoom ${zoomClass}`}>
               <iframe
                 src={`${pdfUrl}#view=FitH&toolbar=0&navpanes=0`}
                 className="w-full h-[500px] border-0 rounded-lg"
