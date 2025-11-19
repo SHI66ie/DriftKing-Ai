@@ -13,10 +13,15 @@ interface DataConfig {
 function getDataConfig(): DataConfig {
   const cloudFrontDomain = process.env.AWS_CLOUDFRONT_DOMAIN
   const s3Bucket = process.env.AWS_S3_BUCKET
+  const awsRegion = process.env.AWS_REGION || 'us-east-1'
+  
+  // If CloudFront is not configured but S3 bucket is, use direct S3 URL
+  const effectiveDomain = cloudFrontDomain || 
+    (s3Bucket ? `${s3Bucket}.s3.${awsRegion}.amazonaws.com` : undefined)
   
   return {
-    useAWS: !!(cloudFrontDomain && s3Bucket),
-    cloudFrontDomain,
+    useAWS: !!(effectiveDomain && s3Bucket),
+    cloudFrontDomain: effectiveDomain,
     s3Bucket
   }
 }
