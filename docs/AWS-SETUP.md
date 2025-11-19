@@ -124,7 +124,6 @@ Create or update your `.env.local` file:
 # AWS Configuration
 AWS_S3_BUCKET=driftking-racing-data
 AWS_CLOUDFRONT_DOMAIN=your-distribution-id.cloudfront.net
-AWS_REGION=us-east-1
 ```
 
 ## Step 7: Test the Setup
