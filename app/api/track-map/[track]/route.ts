@@ -6,6 +6,17 @@ import { isAWSConfigured, getAWSInfo } from '@/lib/aws-data'
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
+// Map track IDs to folder names to match S3/local structure
+const TRACK_FOLDERS: Record<string, string> = {
+  'barber': 'barber',
+  'cota': 'circuit-of-the-americas',
+  'indianapolis': 'indianapolis',
+  'road-america': 'road-america',
+  'sebring': 'sebring',
+  'sonoma': 'sonoma',
+  'vir': 'virginia-international-raceway'
+}
+
 // Map track IDs to possible PDF filenames
 const TRACK_PDF_CANDIDATES: Record<string, string[]> = {
   barber: ['Barber_Circuit_Map.pdf', 'barber_circuit_map.pdf'],
@@ -37,6 +48,7 @@ export async function GET(
       return new NextResponse('Data folder not found', { status: 404 })
     }
 
+    const trackFolder = TRACK_FOLDERS[track] || track
     const candidates = TRACK_PDF_CANDIDATES[track] || []
     
     if (awsConfigured) {
@@ -45,7 +57,7 @@ export async function GET(
       
       // Try mapped candidate filenames first
       for (const name of candidates) {
-        const url = `https://${cloudFrontDomain}/${track}/${name}`
+        const url = `https://${cloudFrontDomain}/${trackFolder}/${name}`
         try {
           const response = await fetch(url)
           if (response.ok) {
