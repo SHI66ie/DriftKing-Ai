@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Car, Trophy, Zap, Target, Brain, Clock, Play, Pause, BarChart3, Download } from 'lucide-react'
+import { Trophy, Zap, Target, Brain, Clock, Play, Pause, BarChart3, Download, Flag, TrendingUp } from 'lucide-react'
 import SetupGuide from '../components/SetupGuide'
 import AIToolsPanel from '../components/AIToolsPanel'
 import AdvancedAIPanel from '../components/AdvancedAIPanel'
 import VoiceControlPanel from '../components/VoiceControlPanel'
 import TrackMapViewer from '../components/TrackMapViewer'
 import WeatherControls from '../components/WeatherControls'
+import ToyotaGRLogo from '../components/ToyotaGRLogo'
 
 interface RaceData {
   loading: boolean
@@ -217,14 +218,22 @@ DEMO DATA (Placeholder):
   })()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white">
       {/* Header */}
-      <header className="bg-black/50 backdrop-blur-sm border-b border-gray-700">
-        <div className="container mx-auto px-6 py-4">
+      <header className="bg-black/80 backdrop-blur-md border-b border-racing-red/30 shadow-lg shadow-racing-red/10">
+        <div className="container mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Car className="w-8 h-8 text-racing-red" />
-              <h1 className="text-2xl font-bold">KobayashiAI Dashboard</h1>
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <ToyotaGRLogo className="w-10 h-10 text-racing-red" />
+                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-racing-blue rounded-full animate-pulse" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  KobayashiAI
+                </h1>
+                <p className="text-xs text-racing-red font-semibold tracking-wider">TOYOTA GAZOO RACING</p>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <select 
@@ -255,13 +264,17 @@ DEMO DATA (Placeholder):
 
       <div className="container mx-auto px-6 py-8">
         {/* Control Panel */}
-        <div className="bg-gray-800/50 rounded-lg p-6 mb-8 border border-gray-700">
-          <h2 className="text-xl font-semibold mb-4">Race Analysis Controls</h2>
+        <div className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 rounded-xl p-6 mb-8 border border-racing-red/20 shadow-xl backdrop-blur-sm">
+          <div className="flex items-center space-x-3 mb-6">
+            <Flag className="w-5 h-5 text-racing-red" />
+            <h2 className="text-xl font-bold tracking-tight">Race Analysis Controls</h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-racing-red/50 to-transparent" />
+          </div>
           <div className="flex flex-wrap gap-4">
             <button 
               onClick={startRaceReplay}
               disabled={isReplaying}
-              className="bg-racing-red hover:bg-red-700 disabled:bg-gray-600 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center space-x-2"
+              className="bg-gradient-to-r from-racing-red to-red-700 hover:from-red-700 hover:to-racing-red disabled:from-gray-600 disabled:to-gray-700 px-6 py-3 rounded-lg font-semibold transition-all shadow-lg shadow-racing-red/20 hover:shadow-racing-red/40 flex items-center space-x-2"
             >
               {isReplaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
               <span>{isReplaying ? 'Analyzing...' : 'Start Race Replay'}</span>
@@ -270,7 +283,7 @@ DEMO DATA (Placeholder):
             <button 
               onClick={() => loadRaceData()}
               disabled={raceData.loading}
-              className="border border-gray-600 hover:border-gray-400 disabled:border-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center space-x-2"
+              className="border-2 border-racing-blue/50 hover:border-racing-blue disabled:border-gray-700 bg-racing-blue/10 hover:bg-racing-blue/20 px-6 py-3 rounded-lg font-semibold transition-all flex items-center space-x-2"
             >
               <BarChart3 className="w-5 h-5" />
               <span>{raceData.loading ? 'Loading...' : 'Load Analytics'}</span>
@@ -279,7 +292,7 @@ DEMO DATA (Placeholder):
             <button 
               onClick={exportReport}
               disabled={isGeneratingReport || raceData.data.length === 0}
-              className="bg-racing-blue hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gradient-to-r from-racing-blue to-blue-700 hover:from-blue-700 hover:to-racing-blue px-6 py-3 rounded-lg font-semibold transition-all shadow-lg shadow-racing-blue/20 hover:shadow-racing-blue/40 flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isGeneratingReport ? (
                 <>
@@ -298,7 +311,7 @@ DEMO DATA (Placeholder):
 
         {/* Current Selection Info */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+          <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 rounded-xl p-6 border border-racing-red/20 shadow-lg backdrop-blur-sm">
             <h3 className="text-lg font-semibold mb-2 flex items-center">
               <Target className="w-5 h-5 mr-2 text-racing-red" />
               Current Selection
@@ -328,7 +341,7 @@ DEMO DATA (Placeholder):
         )}
 
         {raceData.data.length > 0 && (
-          <div className="bg-green-900/20 border border-green-700 rounded-lg p-6 mb-8">
+          <div className="bg-gradient-to-br from-green-900/30 to-green-800/20 border-2 border-green-500/30 rounded-xl p-6 mb-8 shadow-lg shadow-green-500/10">
             <h3 className="font-semibold text-green-400 mb-2">Data Loaded Successfully</h3>
             <p className="text-green-300 mb-2">
               Race data loaded from your local <code>Data/</code> folder and ready for AI analysis.
@@ -596,29 +609,29 @@ DEMO DATA (Placeholder):
 
         {/* Feature Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-gray-800/50 p-6 rounded-lg border border-gray-700">
-            <Brain className="w-8 h-8 text-racing-red mb-4" />
+          <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/60 p-6 rounded-xl border border-racing-red/20 hover:border-racing-red/40 transition-all shadow-lg hover:shadow-racing-red/20 group">
+            <Brain className="w-8 h-8 text-racing-red mb-4 group-hover:scale-110 transition-transform" />
             <h4 className="text-lg font-semibold mb-2">3-Lap Predictor</h4>
             <p className="text-gray-400 text-sm">AI forecasts next 3 laps with 89-95% accuracy</p>
             <div className="mt-4 text-2xl font-bold text-racing-red">92%</div>
           </div>
 
-          <div className="bg-gray-800/50 p-6 rounded-lg border border-gray-700">
-            <Clock className="w-8 h-8 text-racing-blue mb-4" />
+          <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/60 p-6 rounded-xl border border-racing-blue/20 hover:border-racing-blue/40 transition-all shadow-lg hover:shadow-racing-blue/20 group">
+            <Clock className="w-8 h-8 text-racing-blue mb-4 group-hover:scale-110 transition-transform" />
             <h4 className="text-lg font-semibold mb-2">Race Replay</h4>
             <p className="text-gray-400 text-sm">Interactive timeline with AI alerts</p>
             <div className="mt-4 text-2xl font-bold text-racing-blue">Real-time</div>
           </div>
 
-          <div className="bg-gray-800/50 p-6 rounded-lg border border-gray-700">
-            <Target className="w-8 h-8 text-racing-red mb-4" />
+          <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/60 p-6 rounded-xl border border-racing-red/20 hover:border-racing-red/40 transition-all shadow-lg hover:shadow-racing-red/20 group">
+            <Target className="w-8 h-8 text-racing-red mb-4 group-hover:scale-110 transition-transform" />
             <h4 className="text-lg font-semibold mb-2">Strategy Validator</h4>
             <p className="text-gray-400 text-sm">Validates pit calls against race outcomes</p>
             <div className="mt-4 text-2xl font-bold text-racing-red">92%</div>
           </div>
 
-          <div className="bg-gray-800/50 p-6 rounded-lg border border-gray-700">
-            <Zap className="w-8 h-8 text-racing-blue mb-4" />
+          <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/60 p-6 rounded-xl border border-racing-blue/20 hover:border-racing-blue/40 transition-all shadow-lg hover:shadow-racing-blue/20 group">
+            <Zap className="w-8 h-8 text-racing-blue mb-4 group-hover:scale-110 transition-transform" />
             <h4 className="text-lg font-semibold mb-2">AI Training</h4>
             <p className="text-gray-400 text-sm">Generates actionable driver insights</p>
             <div className="mt-4 text-2xl font-bold text-racing-blue">PDF Export</div>

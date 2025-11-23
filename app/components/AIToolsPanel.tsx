@@ -126,28 +126,32 @@ export default function AIToolsPanel({ raceData, track, race, simulatedWeather }
   ]
 
   return (
-    <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+    <div className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 rounded-xl p-6 border border-racing-blue/30 shadow-2xl backdrop-blur-sm">
       <div className="flex items-center mb-6">
-        <Brain className="w-6 h-6 text-racing-blue mr-3" />
-        <h2 className="text-xl font-bold">AI Analysis Tools</h2>
-        <span className="ml-auto text-xs bg-green-500/20 text-green-400 px-3 py-1 rounded-full border border-green-500/30 flex items-center space-x-1">
-          <span>⚡</span>
-          <span>Powered by Groq AI</span>
+        <div className="relative">
+          <Brain className="w-7 h-7 text-racing-blue mr-3" />
+          <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+        </div>
+        <h2 className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">AI Analysis Tools</h2>
+        <div className="flex-1 h-px bg-gradient-to-r from-racing-blue/30 to-transparent mx-4" />
+        <span className="text-xs bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 px-3 py-1.5 rounded-full border border-green-500/40 flex items-center space-x-1.5 shadow-lg shadow-green-500/10">
+          <span className="text-sm">⚡</span>
+          <span className="font-semibold">Groq AI</span>
         </span>
       </div>
 
       {/* Tool Tabs */}
-      <div className="flex space-x-2 mb-6">
+      <div className="flex space-x-3 mb-6">
         {tools.map((tool) => {
           const Icon = tool.icon
           return (
             <button
               key={tool.id}
               onClick={() => setActiveTab(tool.id)}
-              className={`flex-1 p-3 rounded-lg transition-all ${
+              className={`flex-1 p-4 rounded-xl transition-all shadow-lg ${
                 activeTab === tool.id
-                  ? 'bg-racing-blue text-white'
-                  : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700'
+                  ? 'bg-gradient-to-br from-racing-blue to-blue-700 text-white shadow-racing-blue/30 scale-105 border-2 border-racing-blue/50'
+                  : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/70 border-2 border-gray-700/50 hover:border-racing-blue/30'
               }`}
             >
               <Icon className={`w-5 h-5 mx-auto mb-1 ${activeTab === tool.id ? 'text-white' : tool.color}`} />
@@ -158,7 +162,7 @@ export default function AIToolsPanel({ raceData, track, race, simulatedWeather }
       </div>
 
       {/* Tool Content */}
-      <div className="bg-gray-900/50 rounded-lg p-4 min-h-[300px]">
+      <div className="bg-gradient-to-br from-black/40 to-gray-900/60 rounded-xl p-6 min-h-[300px] border border-gray-800/50 shadow-inner">
         {!result ? (
           <div className="text-center py-12">
             {tools.map((tool) => 
@@ -170,7 +174,7 @@ export default function AIToolsPanel({ raceData, track, race, simulatedWeather }
                   <button
                     onClick={tool.action}
                     disabled={loading}
-                    className="bg-racing-blue hover:bg-racing-blue/80 px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-gradient-to-r from-racing-blue to-blue-700 hover:from-blue-700 hover:to-racing-blue px-8 py-3 rounded-xl font-semibold transition-all shadow-lg shadow-racing-blue/30 hover:shadow-racing-blue/50 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     {loading ? (
                       <span className="flex items-center">
@@ -194,7 +198,7 @@ export default function AIToolsPanel({ raceData, track, race, simulatedWeather }
               </h3>
               <button
                 onClick={() => setResult(null)}
-                className="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded transition-colors"
+                className="text-sm bg-gray-800/80 hover:bg-gray-700 px-4 py-2 rounded-lg transition-all border border-gray-700 hover:border-gray-600"
               >
                 Clear
               </button>
@@ -203,7 +207,7 @@ export default function AIToolsPanel({ raceData, track, race, simulatedWeather }
             {/* Formatted Results Display */}
             <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
               {/* Main Content */}
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-5 border border-gray-700 shadow-lg">
+              <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-xl p-6 border border-racing-blue/20 shadow-2xl backdrop-blur-sm">
                 <div className="prose prose-invert max-w-none">
                   {(result.prediction || result.coaching || result.strategy || '').split('\n\n').map((section: string, idx: number) => {
                     // Check if section is a heading (starts with number or **text**)
@@ -250,7 +254,7 @@ export default function AIToolsPanel({ raceData, track, race, simulatedWeather }
 
               {/* Metadata Footer */}
               {result.metadata && (
-                <div className="flex items-center justify-between bg-gray-900/50 rounded-lg p-3 border border-gray-800">
+                <div className="flex items-center justify-between bg-gradient-to-r from-gray-900/70 to-gray-800/70 rounded-lg p-4 border border-racing-blue/20 shadow-lg">
                   <div className="flex items-center space-x-4 text-xs text-gray-400">
                     <span className="flex items-center space-x-1">
                       <span>🤖</span>

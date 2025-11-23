@@ -262,11 +262,15 @@ export default function AdvancedAIPanel({ raceData, track, race, simulatedWeathe
   )
 
   return (
-    <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+    <div className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 rounded-xl p-6 border border-purple-500/30 shadow-2xl backdrop-blur-sm">
       <div className="flex items-center mb-6">
-        <Brain className="w-6 h-6 text-racing-blue mr-3" />
-        <h2 className="text-xl font-bold">Advanced AI Systems</h2>
-        <span className="ml-auto text-xs bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-purple-300 px-3 py-1 rounded-full border border-purple-500/30">
+        <div className="relative">
+          <Brain className="w-7 h-7 text-purple-400 mr-3" />
+          <div className="absolute -top-1 -right-1 w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
+        </div>
+        <h2 className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Advanced AI Systems</h2>
+        <div className="flex-1 h-px bg-gradient-to-r from-purple-500/30 to-transparent mx-4" />
+        <span className="text-xs bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-purple-300 px-3 py-1.5 rounded-full border border-purple-500/40 font-semibold shadow-lg shadow-purple-500/10">
           Research-Grade AI
         </span>
       </div>

@@ -82,13 +82,13 @@ export default function WeatherControls({ initialWeather, onWeatherChange }: Wea
   }
 
   return (
-    <div className="bg-gray-800/50 rounded-lg border border-gray-700 p-6">
+    <div className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 rounded-xl border border-cyan-500/30 p-6 shadow-2xl backdrop-blur-sm">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-2">
-          <Cloud className="w-5 h-5 text-racing-blue" />
-          <h3 className="font-semibold text-lg">Weather Controls</h3>
-          <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">
+        <div className="flex items-center space-x-3">
+          <Cloud className="w-6 h-6 text-cyan-400" />
+          <h3 className="font-bold text-lg tracking-tight">Weather Controls</h3>
+          <span className="text-xs bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-purple-400 px-3 py-1.5 rounded-full border border-purple-500/40 font-semibold">
             Simulation
           </span>
         </div>

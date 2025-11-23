@@ -34,13 +34,13 @@ export default function TrackMapViewer({ track, pdfUrl, mapData }: TrackMapViewe
   const zoomClass = `zoom-${zoom}`
 
   return (
-    <div className="bg-gray-800/50 rounded-lg border border-gray-700 overflow-hidden">
+    <div className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 rounded-xl border border-racing-red/30 overflow-hidden shadow-2xl backdrop-blur-sm">
       {/* Header */}
-      <div className="bg-gray-900/70 px-4 py-3 border-b border-gray-700 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
+      <div className="bg-black/60 backdrop-blur-md px-4 py-4 border-b border-racing-red/30 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
           <MapPin className="w-5 h-5 text-racing-red" />
-          <h3 className="font-semibold">{trackNames[track] || track}</h3>
-          <span className="text-xs bg-racing-blue/20 text-racing-blue px-2 py-1 rounded">Track Map</span>
+          <h3 className="font-bold tracking-tight">{trackNames[track] || track}</h3>
+          <span className="text-xs bg-gradient-to-r from-racing-blue/20 to-blue-600/20 text-racing-blue px-3 py-1.5 rounded-full border border-racing-blue/40 font-semibold">Track Map</span>
         </div>
         <div className="flex items-center space-x-2">
           <button
