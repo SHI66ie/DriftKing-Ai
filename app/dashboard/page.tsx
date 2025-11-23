@@ -103,6 +103,7 @@ If this persists, check the server console for detailed error logs.`,
       console.log('🤖 Requesting AI analysis using local data...')
 
       const { raceResults, lapTimes, weather, dataSource } = raceData.data[0] || {}
+      const weatherForAI = simulatedWeather || weather
 
       // Call AI analysis endpoint
       const response = await fetch('/api/ai-analyze', {
@@ -111,7 +112,7 @@ If this persists, check the server console for detailed error logs.`,
         body: JSON.stringify({
           raceResults,
           lapTimes,
-          weather,
+          weather: weatherForAI,
           track: selectedTrack,
           race: selectedRace
         })

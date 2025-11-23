@@ -32,7 +32,7 @@ try {
 
 export async function POST(request: NextRequest) {
   try {
-    const { driverName, lapTimes, raceResults, telemetry, track }: any = await request.json()
+    const { driverName, lapTimes, raceResults, telemetry, track, weather }: any = await request.json()
 
     if (!groq && !gemini) {
       return NextResponse.json({
@@ -57,6 +57,10 @@ export async function POST(request: NextRequest) {
     const worstLapStr = worstLap !== null ? `${worstLap.toFixed(3)}s` : 'N/A'
     const consistencyStr = consistency !== null ? `${consistency.toFixed(3)}s` : 'N/A'
 
+    const weatherSummary = weather
+      ? `Air: ${weather.airTemp ?? 'N/A'}°C, Track: ${weather.trackTemp ?? 'N/A'}°C, Humidity: ${weather.humidity ?? 'N/A'}%, Wind: ${weather.windSpeed ?? 'N/A'} m/s, Rain: ${weather.rain ? 'Yes' : 'No'}`
+      : 'Not specified'
+
     const prompt = `You are a professional racing coach for Toyota GR Cup. Analyze this driver's performance:
 
 DRIVER: ${driverName || 'Primary Driver'}
@@ -66,6 +70,7 @@ BEST LAP: ${bestLapStr}
 WORST LAP: ${worstLapStr}
 CONSISTENCY GAP: ${consistencyStr}
 FINAL POSITION: ${raceResults?.position || 'N/A'}
+WEATHER: ${weatherSummary}
 
 TELEMETRY INSIGHTS:
 ${telemetry ? JSON.stringify(telemetry).slice(0, 500) : 'Limited data available'}

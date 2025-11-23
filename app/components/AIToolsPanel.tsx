@@ -79,12 +79,13 @@ export default function AIToolsPanel({ raceData, track, race, simulatedWeather }
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          raceData: {
-            lapTimes: raceData?.lapTimes || [],
-            weather: weatherData,
-            track,
-            race
-          },
+          raceResults: raceData?.raceResults || [],
+          lapTimes: raceData?.lapTimes || [],
+          weather: weatherData,
+          track,
+          raceDuration: 'Standard race',
+          tireCompound: 'Medium',
+          fuelLoad: 'Full',
           isSimulated: !!simulatedWeather
         })
       })
