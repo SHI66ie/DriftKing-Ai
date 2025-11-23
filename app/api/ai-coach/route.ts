@@ -1,9 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
+import OpenAI from 'openai'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
+// Initialize Groq (FREE & FAST - PRIMARY)
+let groq: OpenAI | null = null
+try {
+  if (process.env.GROQ_API_KEY) {
+    groq = new OpenAI({
+      apiKey: process.env.GROQ_API_KEY,
+      baseURL: 'https://api.groq.com/openai/v1',
+      timeout: 50000,
+      maxRetries: 2
+    })
+  }
+} catch (error) {
+  console.error('Failed to initialize Groq:', error)
+}
+
+// Initialize Gemini (FREE - fallback)
 let gemini: GoogleGenerativeAI | null = null
 try {
   if (process.env.GEMINI_API_KEY) {
@@ -15,31 +32,39 @@ try {
 
 export async function POST(request: NextRequest) {
   try {
-    const { driverName, lapTimes, raceResults, telemetry, track } = await request.json()
+    const { driverName, lapTimes, raceResults, telemetry, track }: any = await request.json()
 
-    if (!gemini) {
+    if (!groq && !gemini) {
       return NextResponse.json({
-        error: 'Gemini API not configured',
-        message: 'Add GEMINI_API_KEY to .env.local'
+        error: 'No AI service configured',
+        message: 'Add GROQ_API_KEY (recommended) or GEMINI_API_KEY to .env.local'
       }, { status: 503 })
     }
 
-    console.log('🏁 Using Gemini Flash for driver coaching...')
-    const model = gemini.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    console.log(`🏁 Using ${groq ? 'Groq' : 'Gemini'} for driver coaching...`)
 
-    // Analyze driver performance
-    const bestLap = Math.min(...lapTimes.map((l: any) => parseFloat(l.lapTime || l.time || 999)))
-    const worstLap = Math.max(...lapTimes.map((l: any) => parseFloat(l.lapTime || l.time || 0)))
-    const consistency = worstLap - bestLap
+    // Analyze driver performance with safe defaults
+    const safeLapTimes = Array.isArray(lapTimes) ? lapTimes : []
+    const parsedTimes = safeLapTimes
+      .map((l: any) => parseFloat(l.lapTime || l.time || '0'))
+      .filter((t) => Number.isFinite(t) && t > 0)
+
+    const bestLap = parsedTimes.length ? Math.min(...parsedTimes) : null
+    const worstLap = parsedTimes.length ? Math.max(...parsedTimes) : null
+    const consistency = bestLap !== null && worstLap !== null ? worstLap - bestLap : null
+
+    const bestLapStr = bestLap !== null ? `${bestLap.toFixed(3)}s` : 'N/A'
+    const worstLapStr = worstLap !== null ? `${worstLap.toFixed(3)}s` : 'N/A'
+    const consistencyStr = consistency !== null ? `${consistency.toFixed(3)}s` : 'N/A'
 
     const prompt = `You are a professional racing coach for Toyota GR Cup. Analyze this driver's performance:
 
-DRIVER: ${driverName}
+DRIVER: ${driverName || 'Primary Driver'}
 TRACK: ${track}
-TOTAL LAPS: ${lapTimes.length}
-BEST LAP: ${bestLap.toFixed(3)}s
-WORST LAP: ${worstLap.toFixed(3)}s
-CONSISTENCY GAP: ${consistency.toFixed(3)}s
+TOTAL LAPS: ${safeLapTimes.length}
+BEST LAP: ${bestLapStr}
+WORST LAP: ${worstLapStr}
+CONSISTENCY GAP: ${consistencyStr}
 FINAL POSITION: ${raceResults?.position || 'N/A'}
 
 TELEMETRY INSIGHTS:
@@ -53,30 +78,87 @@ Provide:
 5. **Race Strategy**: Overtaking and defensive driving advice
 6. **Next Session Goals**: 2-3 measurable objectives
 
+FORMAT REQUIREMENTS:
+- Respond as a structured driving coaching report in plain text, not JSON.
+- Use numbered sections with **bold** titles and short bullet points.
+- Do NOT mention that you are an AI or language model.
+- Do NOT use code fences or ``` blocks.
+
 Be specific, technical, and actionable. Use racing terminology.`
 
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.6,
-        maxOutputTokens: 2500
-      }
-    })
+    let coaching = ''
+    let modelUsed = ''
+    let tokensUsed = 0
 
-    const coaching = result.response.text()
+    // Try Groq first
+    if (groq) {
+      try {
+        const completion = await groq.chat.completions.create({
+          model: 'llama-3.1-8b-instant',
+          messages: [
+            {
+              role: 'system',
+              content:
+                'You are a professional Toyota GR Cup driver coach. Provide a concise, structured coaching report in plain text. Do NOT mention that you are an AI and do NOT output JSON or code fences.'
+            },
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.6,
+          max_tokens: 2500
+        })
+
+        coaching = completion.choices[0]?.message?.content || ''
+        modelUsed = 'llama-3.1-8b-instant (Groq)'
+        tokensUsed = completion.usage?.total_tokens || 0
+      } catch (error: any) {
+        console.error('Groq driver coaching error:', error.message || error)
+      }
+    }
+
+    // Fallback to Gemini
+    if (!coaching && gemini) {
+      try {
+        const model = gemini.getGenerativeModel({ model: 'gemini-1.5-flash' })
+        const result = await model.generateContent({
+          contents: [{
+            role: 'user',
+            parts: [{
+              text:
+                'Respond as a concise, structured driving coaching report in plain text. Do NOT mention that you are an AI or use JSON/code fences.\n\n' +
+                prompt
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.6,
+            maxOutputTokens: 2500
+          }
+        })
+
+        coaching = result.response.text()
+        modelUsed = 'gemini-1.5-flash'
+        tokensUsed = result.response.usageMetadata?.totalTokenCount || 0
+      } catch (error: any) {
+        console.error('Gemini driver coaching error:', error.message || error)
+      }
+    }
+
+    if (!coaching) {
+      throw new Error('All AI providers failed to generate coaching')
+    }
 
     return NextResponse.json({
       success: true,
       coaching,
       driverStats: {
-        bestLap: bestLap.toFixed(3),
-        worstLap: worstLap.toFixed(3),
-        consistency: consistency.toFixed(3),
-        totalLaps: lapTimes.length
+        bestLap: bestLapStr,
+        worstLap: worstLapStr,
+        consistency: consistencyStr,
+        totalLaps: safeLapTimes.length
       },
       metadata: {
-        model: 'gemini-1.5-flash',
-        tokensUsed: result.response.usageMetadata?.totalTokenCount || 0
+        model: modelUsed,
+        tokensUsed,
+        provider: groq ? 'Groq (FREE)' : 'Gemini (FREE)'
       }
     })
 

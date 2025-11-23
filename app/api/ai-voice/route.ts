@@ -1,17 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server'
+import OpenAI from 'openai'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
-// Voice-controlled racing AI inspired by Simulator Controller
+// Initialize Groq (FREE & FAST - PRIMARY)
+let groq: OpenAI | null = null
+try {
+  if (process.env.GROQ_API_KEY) {
+    groq = new OpenAI({
+      apiKey: process.env.GROQ_API_KEY,
+      baseURL: 'https://api.groq.com/openai/v1',
+      timeout: 50000,
+      maxRetries: 2
+    })
+  }
+} catch (error) {
+  console.error('Failed to initialize Groq for voice AI:', error)
+}
+
+// Voice-controlled racing AI inspired by Simulator Controller (Gemini fallback)
 let gemini: GoogleGenerativeAI | null = null
 try {
   if (process.env.GEMINI_API_KEY) {
     gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
   }
 } catch (error) {
-  console.error('Failed to initialize Gemini:', error)
+  console.error('Failed to initialize Gemini for voice AI:', error)
 }
 
 export async function POST(request: NextRequest) {
@@ -24,15 +40,14 @@ export async function POST(request: NextRequest) {
       mode = 'race_engineer'
     }: any = await request.json()
 
-    if (!gemini) {
+    if (!groq && !gemini) {
       return NextResponse.json({
         error: 'Voice AI not configured',
-        message: 'Add GEMINI_API_KEY to enable voice-controlled racing AI'
+        message: 'Add GROQ_API_KEY (recommended) or GEMINI_API_KEY to enable voice-controlled racing AI'
       }, { status: 503 })
     }
 
-    console.log('🎤 Processing voice command:', voiceCommand)
-    const model = gemini.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    console.log('🎤 Processing voice command with', groq ? 'Groq' : 'Gemini', ':', voiceCommand)
 
     // Create voice interaction context
     const voiceContext = `
@@ -161,17 +176,61 @@ Example responses:
 
 Provide your radio response now:`
 
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: fullPrompt }] }],
-      generationConfig: {
-        temperature: 0.6,
-        maxOutputTokens: 200, // Keep responses short for voice
-        topP: 0.8
-      }
-    })
+    let aiResponse = ''
+    let modelUsed = ''
+    let tokensUsed = 0
 
-    const response = result.response.text()
-    const tokensUsed = result.response.usageMetadata?.totalTokenCount || 0
+    // Try Groq first (FREE & FAST)
+    if (groq) {
+      try {
+        const completion = await groq.chat.completions.create({
+          model: 'llama-3.1-8b-instant',
+          messages: [
+            {
+              role: 'system',
+              content:
+                'You are an AI race radio assistant. Reply in under 50 words, plain text, no JSON or code fences, using clear racing radio style.'
+            },
+            { role: 'user', content: fullPrompt }
+          ],
+          temperature: 0.6,
+          max_tokens: 200
+        })
+
+        aiResponse = completion.choices[0]?.message?.content || ''
+        modelUsed = 'llama-3.1-8b-instant (Groq)'
+        tokensUsed = completion.usage?.total_tokens || 0
+      } catch (error: any) {
+        console.error('Groq voice AI error:', error.message || error)
+      }
+    }
+
+    // Fallback to Gemini
+    if (!aiResponse && gemini) {
+      try {
+        const model = gemini.getGenerativeModel({ model: 'gemini-1.5-flash' })
+        const result = await model.generateContent({
+          contents: [{ role: 'user', parts: [{ text: fullPrompt }] }],
+          generationConfig: {
+            temperature: 0.6,
+            maxOutputTokens: 200, // Keep responses short for voice
+            topP: 0.8
+          }
+        })
+
+        aiResponse = result.response.text()
+        modelUsed = 'gemini-1.5-flash'
+        tokensUsed = result.response.usageMetadata?.totalTokenCount || 0
+      } catch (error: any) {
+        console.error('Gemini voice AI error:', error.message || error)
+      }
+    }
+
+    if (!aiResponse) {
+      throw new Error('All AI providers failed for voice command')
+    }
+
+    const response = aiResponse.trim()
 
     // Extract command intent and priority
     const intent = extractCommandIntent(voiceCommand)
@@ -186,7 +245,8 @@ Provide your radio response now:`
       priority,
       mode,
       metadata: {
-        model: 'gemini-1.5-flash-voice',
+        model: modelUsed,
+        provider: groq ? 'Groq (FREE)' : 'Gemini (FREE)',
         tokensUsed,
         responseLength: response.length,
         processingTime: Date.now(),

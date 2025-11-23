@@ -94,15 +94,21 @@ Average Lap Time: ${avgLapTime.toFixed(3)}s
 Recent Lap Times: ${recentLaps.map((l: any) => l.lapTime || l.time).join(', ')}
 Weather: ${JSON.stringify(weather)}
 
-PREDICT THE NEXT 3 LAPS:
-1. Expected lap times (with confidence %)
-2. Position changes probability
-3. Tire degradation impact
-4. Fuel strategy recommendation
-5. Overtaking opportunities
-6. Risk assessment (high/medium/low)
+PREDICT THE NEXT 3 LAPS AND WRITE A RACE PREDICTION REPORT:
+- Give expected lap times for the next 3 laps, with confidence levels.
+- Describe likely position changes and overtaking chances.
+- Explain tire degradation impact and fuel strategy recommendations.
+- Assess overall risk level (high/medium/low) and key threats/opportunities.
 
-Provide specific, data-driven predictions with reasoning. Format as structured JSON.`
+FORMAT REQUIREMENTS (VERY IMPORTANT):
+1. Respond in plain text as a multi-section race prediction report, not as JSON.
+2. Use numbered sections with bold titles, for example:
+   "1. **Summary**" then one or more sentences.
+3. Use short bullet points where helpful, but no code blocks.
+4. Do NOT include any backticks, code fences, or JSON/CSS/JS syntax.
+5. Do NOT wrap the answer in ```json or any other fenced block.
+
+Your final answer should read like a human-written race engineer report for the driver and team.`
 
     let prediction = ''
     let modelUsed = ''
@@ -114,7 +120,7 @@ Provide specific, data-driven predictions with reasoning. Format as structured J
         const completion = await groq.chat.completions.create({
           model: 'llama-3.1-8b-instant',
           messages: [
-            { role: 'system', content: 'You are an expert Toyota GR Cup race strategist. Provide data-driven predictions.' },
+            { role: 'system', content: 'You are an expert Toyota GR Cup race strategist. Provide a clear, narrative race prediction report in plain text. Do NOT output JSON or code fences.' },
             { role: 'user', content: prompt }
           ],
           temperature: 0.4,
@@ -134,7 +140,7 @@ Provide specific, data-driven predictions with reasoning. Format as structured J
         const completion = await deepseek.chat.completions.create({
           model: 'deepseek-chat',
           messages: [
-            { role: 'system', content: 'You are an expert Toyota GR Cup race strategist. Provide data-driven predictions.' },
+            { role: 'system', content: 'You are an expert Toyota GR Cup race strategist. Provide a clear, narrative race prediction report in plain text. Do NOT output JSON or code fences.' },
             { role: 'user', content: prompt }
           ],
           temperature: 0.4,
@@ -153,7 +159,7 @@ Provide specific, data-driven predictions with reasoning. Format as structured J
       try {
         const model = gemini.getGenerativeModel({ model: 'gemini-1.5-pro' })
         const result = await model.generateContent({
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          contents: [{ role: 'user', parts: [{ text: 'Provide a clear, narrative race prediction report in plain text. Do NOT output JSON or code fences.\n\n' + prompt }] }],
           generationConfig: {
             temperature: 0.4,
             maxOutputTokens: 2000,
@@ -175,7 +181,7 @@ Provide specific, data-driven predictions with reasoning. Format as structured J
         const completion = await openai.chat.completions.create({
           model: 'gpt-3.5-turbo',
           messages: [
-            { role: 'system', content: 'You are an expert Toyota GR Cup race strategist. Provide data-driven predictions.' },
+            { role: 'system', content: 'You are an expert Toyota GR Cup race strategist. Provide a clear, narrative race prediction report in plain text. Do NOT output JSON or code fences.' },
             { role: 'user', content: prompt }
           ],
           temperature: 0.4,

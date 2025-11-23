@@ -44,11 +44,17 @@ export default function AIToolsPanel({ raceData, track, race, simulatedWeather }
     setLoading(true)
     try {
       const weatherData = simulatedWeather || raceData?.weather || {}
+      const primaryDriver =
+        raceData?.raceResults?.[0]?.driverName ||
+        raceData?.raceResults?.[0]?.driver ||
+        'Primary Driver'
       const response = await fetch('/api/ai-coach', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          driverName: primaryDriver,
           lapTimes: raceData?.lapTimes || [],
+          raceResults: raceData?.raceResults || [],
           telemetry: raceData?.telemetry || [],
           weather: weatherData,
           track,
