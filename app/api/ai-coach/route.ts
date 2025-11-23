@@ -82,7 +82,7 @@ FORMAT REQUIREMENTS:
 - Respond as a structured driving coaching report in plain text, not JSON.
 - Use numbered sections with **bold** titles and short bullet points.
 - Do NOT mention that you are an AI or language model.
-- Do NOT use code fences or ``` blocks.
+- Do NOT use markdown code fences or formatted code blocks.
 
 Be specific, technical, and actionable. Use racing terminology.`
 

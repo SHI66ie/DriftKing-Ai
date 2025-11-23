@@ -105,8 +105,7 @@ FORMAT REQUIREMENTS (VERY IMPORTANT):
 2. Use numbered sections with bold titles, for example:
    "1. **Summary**" then one or more sentences.
 3. Use short bullet points where helpful, but no code blocks.
-4. Do NOT include any backticks, code fences, or JSON/CSS/JS syntax.
-5. Do NOT wrap the answer in ```json or any other fenced block.
+4. Do NOT include any markdown code fences or code blocks.
 
 Your final answer should read like a human-written race engineer report for the driver and team.`
 
