@@ -10,6 +10,8 @@ import VoiceControlPanel from '../components/VoiceControlPanel'
 import TrackMapViewer from '../components/TrackMapViewer'
 import WeatherControls from '../components/WeatherControls'
 import ToyotaGRLogo from '../components/ToyotaGRLogo'
+import DriverComparisonPanel from '../components/DriverComparisonPanel'
+import RaceQASection from '../components/RaceQASection'
 
 interface RaceData {
   loading: boolean
@@ -589,6 +591,11 @@ DEMO DATA (Placeholder):
           </div>
         )}
 
+        {/* Driver Comparison Panel */}
+        {raceData.data.length > 0 && (
+          <DriverComparisonPanel raceData={raceData.data[0]} />
+        )}
+
         {/* AI Tools Panel */}
         {raceData.data.length > 0 && (
           <div className="mb-8">
@@ -611,6 +618,15 @@ DEMO DATA (Placeholder):
               simulatedWeather={simulatedWeather}
             />
           </div>
+        )}
+
+        {/* AI Q&A Section */}
+        {raceData.data.length > 0 && (
+          <RaceQASection
+            raceData={raceData.data[0]}
+            track={selectedTrack}
+            race={selectedRace}
+          />
         )}
 
         {/* Voice Control Panel */}
