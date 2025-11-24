@@ -70,17 +70,24 @@ export async function GET(
 
     // Load race results - try common file patterns first
     const raceNum = race.slice(1) // "R1" -> "1"
-    const raceFiles = [
-      `03_Results GR Cup Race ${raceNum} Official_Anonymized.json`,
-      `03_Results GR Cup Race ${raceNum} Official1_Anonymized.json`,
-      `03_GR Cup Race ${raceNum} Official Results.json`,
-      `00_Results GR Race ${raceNum} Official_Anonymized.json`,
-      `00_Results GR Cup Race ${raceNum} Official_Anonymized.json`,
-      `03_Provisional Results_Race ${raceNum}_Anonymized.json`,
-      `03_Provisional Results_Race ${raceNum}.json`,
-      `03_Provisional_Results_Race ${raceNum}_Anonymized.json`,
-      `${race}_${track}_race_results.json`
-    ]
+    const raceFiles = awsConfigured
+      ? [
+          // In AWS we expect a consistent naming scheme; keep patterns minimal
+          `03_Results GR Cup Race ${raceNum} Official_Anonymized.json`,
+          `${race}_${track}_race_results.json`
+        ]
+      : [
+          // Local dev: be more forgiving and try many historical variants
+          `03_Results GR Cup Race ${raceNum} Official_Anonymized.json`,
+          `03_Results GR Cup Race ${raceNum} Official1_Anonymized.json`,
+          `03_GR Cup Race ${raceNum} Official Results.json`,
+          `00_Results GR Race ${raceNum} Official_Anonymized.json`,
+          `00_Results GR Cup Race ${raceNum} Official_Anonymized.json`,
+          `03_Provisional Results_Race ${raceNum}_Anonymized.json`,
+          `03_Provisional Results_Race ${raceNum}.json`,
+          `03_Provisional_Results_Race ${raceNum}_Anonymized.json`,
+          `${race}_${track}_race_results.json`
+        ]
 
     let raceResults = null
     for (const file of raceFiles) {
@@ -138,12 +145,17 @@ export async function GET(
     }
 
     // Load weather data
-    const weatherFiles = [
-      `26_Weather_Race ${raceNum}_Anonymized.json`,
-      `26_Weather_Race ${raceNum}.json`,
-      `26_Weather_ Race ${raceNum}_Anonymized.json`,
-      `${race}_${track}_weather.json`
-    ]
+    const weatherFiles = awsConfigured
+      ? [
+          `26_Weather_Race ${raceNum}_Anonymized.json`,
+          `${race}_${track}_weather.json`
+        ]
+      : [
+          `26_Weather_Race ${raceNum}_Anonymized.json`,
+          `26_Weather_Race ${raceNum}.json`,
+          `26_Weather_ Race ${raceNum}_Anonymized.json`,
+          `${race}_${track}_weather.json`
+        ]
     let weather = null
     for (const file of weatherFiles) {
       weather = await loadDataFile(file)

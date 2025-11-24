@@ -46,16 +46,12 @@ export async function fetchRaceData(track: string, filename: string): Promise<an
     // Production: Fetch from AWS CloudFront
     const base = `https://${config.cloudFrontDomain}`
 
-    // Support multiple possible key layouts so bucket structure can be
-    // either mirrored from local Data/ or flattened.
+    // Support the two expected key layouts:
+    // 1) <trackFolder>/<filename>
+    // 2) Data/<trackFolder>/<filename>
     const keyCandidates = [
-      // Preferred layout: <track>/<filename>
       `${track}/${filename}`,
-      // Layout with Data/ prefix (e.g. Data/virginia-international-raceway/...)
-      `Data/${track}/${filename}`,
-      // Fallbacks: file at root or under Data/
-      `${filename}`,
-      `Data/${filename}`
+      `Data/${track}/${filename}`
     ]
 
     for (const key of keyCandidates) {

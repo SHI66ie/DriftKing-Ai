@@ -60,7 +60,7 @@ export default function DashboardPage() {
       if (!response.ok) {
         const errorData: any = await response.json().catch(() => ({ error: 'Unknown error' }))
         console.error('❌ API Error:', errorData)
-        throw new Error(errorData.error || errorData.message || 'Failed to load data from local files')
+        throw new Error(errorData.error || errorData.message || 'Failed to load data from server API')
       }
 
       const data: any = await response.json()
