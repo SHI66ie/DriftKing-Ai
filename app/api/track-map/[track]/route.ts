@@ -50,24 +50,42 @@ export async function GET(
 
     const trackFolder = TRACK_FOLDERS[track] || track
     const candidates = TRACK_PDF_CANDIDATES[track] || []
+
+    // Build list of candidate filenames for multiple extensions (pdf/png/jpg/jpeg)
+    const allCandidates: string[] = []
+    for (const name of candidates) {
+      const base = name.replace(/\.(pdf|png|jpe?g)$/i, '')
+      allCandidates.push(
+        `${base}.pdf`,
+        `${base}.png`,
+        `${base}.jpg`,
+        `${base}.jpeg`
+      )
+    }
     
     if (awsConfigured) {
-      // AWS: Try to fetch PDF from CloudFront
+      // AWS: Try to fetch map file from CloudFront (PDF or image)
       const cloudFrontDomain = getAWSInfo().domain
+      const mapsPrefix = 'maps'
       
       // Try mapped candidate filenames first
-      for (const name of candidates) {
-        const url = `https://${cloudFrontDomain}/${trackFolder}/${name}`
+      for (const name of allCandidates) {
+        const url = `https://${cloudFrontDomain}/${mapsPrefix}/${trackFolder}/${name}`
         try {
           const response = await fetch(url)
           if (response.ok) {
             console.log(`✓ Found track map at: ${url}`)
-            const pdfBuffer = await response.arrayBuffer()
+            const fileBuffer = await response.arrayBuffer()
+            const ext = path.extname(name).toLowerCase()
+            const contentType =
+              ext === '.png' ? 'image/png' :
+              ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' :
+              'application/pdf'
             
-            return new NextResponse(pdfBuffer, {
+            return new NextResponse(fileBuffer, {
               status: 200,
               headers: {
-                'Content-Type': 'application/pdf',
+                'Content-Type': contentType,
                 'Content-Disposition': `inline; filename="${name}"`
               }
             })
@@ -80,23 +98,30 @@ export async function GET(
       // If no candidate found, return 404
       return new NextResponse('Track map PDF not found on AWS', { status: 404 })
     } else {
-      // Local: Use existing filesystem logic
-      const trackFolder = path.join(dataRoot, track)
+      // Local: Use existing filesystem logic, plus optional Data/maps/<trackFolder>/
+      const trackDir = path.join(dataRoot, track)
+      const mappedTrackFolder = TRACK_FOLDERS[track] || track
+      const mapsTrackDir = path.join(dataRoot, 'maps', mappedTrackFolder)
       const searchPaths: string[] = []
 
-      // 1) Track-specific folder
-      if (fs.existsSync(trackFolder) && fs.statSync(trackFolder).isDirectory()) {
-        searchPaths.push(trackFolder)
+      // 1) Maps folder for this track inside Data/maps
+      if (fs.existsSync(mapsTrackDir) && fs.statSync(mapsTrackDir).isDirectory()) {
+        searchPaths.push(mapsTrackDir)
       }
 
-      // 2) Data root as fallback
+      // 2) Track-specific folder at Data/<track>
+      if (fs.existsSync(trackDir) && fs.statSync(trackDir).isDirectory()) {
+        searchPaths.push(trackDir)
+      }
+
+      // 3) Data root as fallback
       searchPaths.push(dataRoot)
 
       let pdfPath: string | null = null
 
-      // Try mapped candidate filenames first
+      // Try mapped candidate filenames first (pdf/png/jpg/jpeg)
       for (const baseDir of searchPaths) {
-        for (const name of candidates) {
+        for (const name of allCandidates) {
           const fullPath = path.join(baseDir, name)
           if (fs.existsSync(fullPath)) {
             pdfPath = fullPath
@@ -106,13 +131,18 @@ export async function GET(
         if (pdfPath) break
       }
 
-      // Final fallback: first PDF that contains track id in its name
+      // Final fallback: first map file that contains track id in its name
       if (!pdfPath) {
         for (const baseDir of searchPaths) {
           const files = fs.readdirSync(baseDir)
           const candidate = files.find(f => {
             const lower = f.toLowerCase()
-            return lower.endsWith('.pdf') && lower.includes(track.toLowerCase())
+            const isMapFile =
+              lower.endsWith('.pdf') ||
+              lower.endsWith('.png') ||
+              lower.endsWith('.jpg') ||
+              lower.endsWith('.jpeg')
+            return isMapFile && lower.includes(track.toLowerCase())
           })
           if (candidate) {
             pdfPath = path.join(baseDir, candidate)
@@ -126,11 +156,16 @@ export async function GET(
       }
 
       const fileBuffer = fs.readFileSync(pdfPath)
+      const ext = path.extname(pdfPath).toLowerCase()
+      const contentType =
+        ext === '.png' ? 'image/png' :
+        ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' :
+        'application/pdf'
 
       return new NextResponse(fileBuffer, {
         status: 200,
         headers: {
-          'Content-Type': 'application/pdf',
+          'Content-Type': contentType,
           'Content-Disposition': `inline; filename="${path.basename(pdfPath)}"`
         }
       })
