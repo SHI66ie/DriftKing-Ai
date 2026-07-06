@@ -857,14 +857,44 @@ export default function F1Page() {
   // Enhanced Weekend Schedule Parser
   const parseWeekendSchedule = (raceDate: string, format: string, track: string) => {
     // Parse dates like "March 6-8, 2026" or "March 15, 2026" into session times
-    const [monthDay, year] = raceDate.split(', ')
-    const [month, days] = monthDay.split(' ')
-    const dayParts = days.split('-').map(d => parseInt(d))
-    const startDay = dayParts[0]
-    const endDay = dayParts.length > 1 ? dayParts[1] : startDay
+    if (!raceDate) {
+      console.error('Invalid raceDate provided to parseWeekendSchedule:', raceDate);
+      return {
+        practice1: new Date(),
+        practice2: new Date(),
+        qualifying: new Date(),
+        sprint: null,
+        race: new Date()
+      };
+    }
 
-    const yearNum = parseInt(year)
-    const monthIndex = new Date(`${month} 1, ${year}`).getMonth()
+    const parts = raceDate.split(', ');
+    if (parts.length < 2) {
+      console.error('Invalid date format:', raceDate);
+      return {
+        practice1: new Date(),
+        practice2: new Date(),
+        qualifying: new Date(),
+        sprint: null,
+        race: new Date()
+      };
+    }
+
+    const [monthDay, year] = parts;
+    const [month, days] = monthDay.split(' ');
+    const dayParts = days.split('-').map(d => parseInt(d.trim()));
+    const startDay = dayParts[0];
+    const endDay = dayParts.length > 1 ? dayParts[1] : startDay;
+
+    const yearNum = parseInt(year.trim());
+    
+    // Map month names to indices for reliable parsing
+    const monthMap: { [key: string]: number } = {
+      'january': 0, 'february': 1, 'march': 2, 'april': 3, 'may': 4, 'june': 5,
+      'july': 6, 'august': 7, 'september': 8, 'october': 9, 'november': 10, 'december': 11
+    };
+    
+    const monthIndex = monthMap[month.toLowerCase()] ?? new Date(`${month} 1, ${year}`).getMonth();
 
     // Standard F1 weekend schedule (times are approximate and may vary by track/timezone)
     const weekend = {
