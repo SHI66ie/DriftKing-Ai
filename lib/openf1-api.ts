@@ -77,6 +77,27 @@ export interface OpenF1WeatherData {
     session_key: number
 }
 
+export interface OpenF1StintData {
+    driver_number: number
+    lap_start: number
+    lap_end: number
+    compound: string
+    tyre_age_at_start: number
+    stint_number: number
+    session_key: number
+    meeting_key: number
+}
+
+export interface OpenF1LocationData {
+    driver_number: number
+    date: string
+    x: number
+    y: number
+    z: number
+    session_key: number
+    meeting_key: number
+}
+
 async function openf1Fetch<T>(endpoint: string, params: Record<string, any> = {}): Promise<T> {
     const query = new URLSearchParams(params).toString()
     const url = `${OPENF1_BASE_URL}${endpoint}${query ? `?${query}` : ''}`
@@ -149,6 +170,20 @@ export const openf1Api = {
     // Get race control messages (safety cars, flags, etc.)
     async getRaceControlData(sessionKey: number): Promise<any[]> {
         return await openf1Fetch<any[]>('/race_control', { session_key: sessionKey })
+    },
+
+    // Get stints data for tire strategy
+    async getStints(sessionKey: number, driverNumber?: number): Promise<OpenF1StintData[]> {
+        const params: any = { session_key: sessionKey }
+        if (driverNumber) params.driver_number = driverNumber
+        return await openf1Fetch<OpenF1StintData[]>('/stints', params)
+    },
+
+    // Get track position (x, y, z) location data
+    async getLocation(sessionKey: number, driverNumber?: number): Promise<OpenF1LocationData[]> {
+        const params: any = { session_key: sessionKey }
+        if (driverNumber) params.driver_number = driverNumber
+        return await openf1Fetch<OpenF1LocationData[]>('/location', params)
     }
 }
 
