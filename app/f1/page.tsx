@@ -2668,7 +2668,7 @@ export default function F1Page() {
                 <div className={`bg-gray-900/50 rounded-xl p-4 border ${sessionCountdowns.practice2.isLive ? 'border-green-500/50 bg-green-500/10' : 'border-gray-700'}`}>
                   <div className="text-center">
                     <div className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Practice 2</div>
-                    <div className="text-sm font-bold text-gray-300 mb-2">Sat {currentWeekend?.practice2.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                    <div className="text-sm font-bold text-gray-300 mb-2">Sat {currentWeekend?.practice2.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})}</div>
                     {sessionCountdowns.practice2.isLive ? (
                       <div className="text-green-400 font-bold text-lg animate-pulse">LIVE</div>
                     ) : (
@@ -2699,7 +2699,7 @@ export default function F1Page() {
                   <div className={`bg-gray-900/50 rounded-xl p-4 border ${sessionCountdowns.sprint.isLive ? 'border-purple-500/50 bg-purple-500/10' : 'border-gray-700'}`}>
                     <div className="text-center">
                       <div className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Sprint</div>
-                      <div className="text-sm font-bold text-gray-300 mb-2">Sat {currentWeekend?.sprint.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                      <div className="text-sm font-bold text-gray-300 mb-2">Sat {currentWeekend?.sprint.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})}</div>
                       {sessionCountdowns.sprint.isLive ? (
                         <div className="text-purple-400 font-bold text-lg animate-pulse">LIVE</div>
                       ) : (
@@ -2730,7 +2730,7 @@ export default function F1Page() {
                 <div className={`bg-gray-900/50 rounded-xl p-4 border ${sessionCountdowns.qualifying.isLive ? 'border-blue-500/50 bg-blue-500/10' : 'border-gray-700'}`}>
                   <div className="text-center">
                     <div className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Qualifying</div>
-                    <div className="text-sm font-bold text-gray-300 mb-2">Sat {currentWeekend?.qualifying.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                    <div className="text-sm font-bold text-gray-300 mb-2">Sat {currentWeekend?.qualifying.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})}</div>
                     {sessionCountdowns.qualifying.isLive ? (
                       <div className="text-blue-400 font-bold text-lg animate-pulse">LIVE</div>
                     ) : (
@@ -2760,7 +2760,7 @@ export default function F1Page() {
                 <div className={`bg-gray-900/50 rounded-xl p-4 border ${sessionCountdowns.race.isLive ? 'border-racing-red/50 bg-racing-red/10' : 'border-gray-700'}`}>
                   <div className="text-center">
                     <div className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Main Race</div>
-                    <div className="text-sm font-bold text-gray-300 mb-2">Sun {currentWeekend?.race.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                    <div className="text-sm font-bold text-gray-300 mb-2">Sun {currentWeekend?.race.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})}</div>
                     {sessionCountdowns.race.isLive ? (
                       <div className="text-racing-red font-bold text-lg animate-pulse">LIVE</div>
                     ) : (
@@ -4484,7 +4484,7 @@ export default function F1Page() {
                       .filter(s => s.trackInfo.id === selectedTrackForPractice)
                       .map(s => (
                         <option key={s.session_key} value={s.session_key}>
-                          {s.session_name} ({new Date(s.date_start).toLocaleDateString()})
+                          {s.session_name} ({new Date(s.date_start).toLocaleDateString('en-US')})
                         </option>
                       ))}
                   </select>
@@ -5198,7 +5198,7 @@ export default function F1Page() {
                     <h3 className="text-lg font-bold text-white mb-1 truncate">{archive.sessionName || 'Recorded Session'}</h3>
                     <p className="text-xs text-gray-400 mb-6 flex items-center">
                       <Clock className="w-3 h-3 mr-1" />
-                      {new Date(archive.recordedAt).toLocaleString()}
+                      {new Date(archive.recordedAt).toLocaleString('en-US')}
                     </p>
 
                     <div className="mt-auto pt-6 border-t border-white/5 space-y-3">
