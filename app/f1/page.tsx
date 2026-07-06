@@ -1287,29 +1287,29 @@ export default function F1Page() {
   // Helper function to get country flag emoji
   const getCountryFlag = (country: string) => {
     const flags: { [key: string]: string } = {
-      'Monaco': 'Γëí╞Æ├ºΓûôΓëí╞Æ├º┬┐',
-      'UK': 'Γëí╞Æ├º┬╝Γëí╞Æ├º┬║',
-      'Belgium': 'Γëí╞Æ├º┬║Γëí╞Æ├º┬¼',
-      'Italy': 'Γëí╞Æ├º┬½Γëí╞Æ├ºΓòú',
-      'Spain': 'Γëí╞Æ├º┬¼Γëí╞Æ├ºΓòò',
-      'Austria': 'Γëí╞Æ├º┬¬Γëí╞Æ├ºΓòú',
-      'UAE': 'Γëí╞Æ├º┬¬Γëí╞Æ├º┬¼',
-      'Brazil': 'Γëí╞Æ├º┬║Γëí╞Æ├ºΓòû',
-      'Bahrain': 'Γëí╞Æ├º┬║Γëí╞Æ├º┬í',
-      'Saudi Arabia': 'Γëí╞Æ├ºΓòòΓëí╞Æ├º┬¬',
-      'USA': 'Γëí╞Æ├ºΓòæΓëí╞Æ├ºΓòò',
-      'Hungary': 'Γëí╞Æ├º┬íΓëí╞Æ├ºΓòæ',
-      'Netherlands': 'Γëí╞Æ├ºΓöéΓëí╞Æ├ºΓûÆ',
-      'Singapore': 'Γëí╞Æ├ºΓòòΓëí╞Æ├º┬╝',
-      'Japan': 'Γëí╞Æ├º┬╗Γëí╞Æ├ºΓòí',
-      'China': 'Γëí╞Æ├º┬┐Γëí╞Æ├ºΓöé',
-      'Azerbaijan': 'Γëí╞Æ├º┬¬Γëí╞Æ├ºΓöÉ',
-      'Australia': 'Γëí╞Æ├º┬¬Γëí╞Æ├ºΓòæ',
-      'Canada': 'Γëí╞Æ├º┬┐Γëí╞Æ├º┬¬',
-      'Mexico': 'Γëí╞Æ├ºΓûôΓëí╞Æ├ºΓò£',
-      'Qatar': 'Γëí╞Æ├ºΓòóΓëí╞Æ├º┬¬'
+      'Monaco': '🇲🇨',
+      'UK': '🇬🇧',
+      'Belgium': '🇧🇪',
+      'Italy': '🇮🇹',
+      'Spain': '🇪🇸',
+      'Austria': '🇦🇹',
+      'UAE': '🇦🇪',
+      'Brazil': '🇧🇷',
+      'Bahrain': '🇧🇭',
+      'Saudi Arabia': '🇸🇦',
+      'USA': '🇺🇸',
+      'Hungary': '🇭🇺',
+      'Netherlands': '🇳🇱',
+      'Singapore': '🇸🇬',
+      'Japan': '🇯🇵',
+      'China': '🇨🇳',
+      'Azerbaijan': '🇦🇿',
+      'Australia': '🇦🇺',
+      'Canada': '🇨🇦',
+      'Mexico': '🇲🇽',
+      'Qatar': '🇶🇦'
     }
-    return flags[country] || 'Γëí╞Æ├à├╝'
+    return flags[country] || '🏁'
   }
 
   // F1 Race Prediction Functions
