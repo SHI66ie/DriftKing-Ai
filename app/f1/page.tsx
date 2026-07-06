@@ -651,7 +651,7 @@ export default function F1Page() {
       return apiRaces.map(r => ({
         id: r.id,
         name: r.name,
-        date: new Date(r.date).toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' }),
+        date: new Date(r.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
         track: r.circuit,
         country: r.country,
         leader: 'TBD',
@@ -2374,7 +2374,7 @@ export default function F1Page() {
       const report = 'KobayashiAI Race Analysis Report\n' +
         'Track: ' + (tracks.find(t => t.id === selectedTrack)?.name || selectedTrack) + '\n' +
         'Race: ' + selectedRace + '\n' +
-        'Generated: ' + new Date().toLocaleString() + '\n\n' +
+        'Generated: ' + new Date().toLocaleString('en-US') + '\n\n' +
         (result.analysis || 'Analysis complete.')
 
       setGeneratedReport(report)
@@ -2391,7 +2391,7 @@ export default function F1Page() {
       const report = 'KobayashiAI Race Analysis Report\n' +
         'Track: ' + (tracks.find(t => t.id === selectedTrack)?.name || selectedTrack) + '\n' +
         'Race: ' + selectedRace + '\n' +
-        'Generated: ' + new Date().toLocaleString() + '\n\n' +
+        'Generated: ' + new Date().toLocaleString('en-US') + '\n\n' +
         '╬ô├£├íΓê⌐Γòò├à AI Analysis Unavailable\n' +
         (error.message || 'Could not connect to AI service')
 
@@ -2638,7 +2638,7 @@ export default function F1Page() {
                 <div className={`bg-gray-900/50 rounded-xl p-4 border ${sessionCountdowns.practice1.isLive ? 'border-green-500/50 bg-green-500/10' : 'border-gray-700'}`}>
                   <div className="text-center">
                     <div className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Practice 1</div>
-                    <div className="text-sm font-bold text-gray-300 mb-2">Fri {currentWeekend?.practice1.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                    <div className="text-sm font-bold text-gray-300 mb-2">Fri {currentWeekend?.practice1.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})}</div>
                     {sessionCountdowns.practice1.isLive ? (
                       <div className="text-green-400 font-bold text-lg animate-pulse">LIVE</div>
                     ) : (
