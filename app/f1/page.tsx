@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense, Fragment } from 'react'
 import { Trophy, Zap, Target, Brain, Clock, Play, Pause, BarChart3, Download, Flag, TrendingUp, ArrowLeft, ArrowRight, Calendar, LayoutDashboard, Settings, Info, Cloud, Thermometer, Wind, Droplets, History, Database, Satellite, Activity, Eye } from 'lucide-react'
@@ -2215,8 +2215,8 @@ export default function F1Page() {
     { id: 'baku', name: 'Baku City Circuit', location: 'Baku', available: true, category: 'f1', country: 'Azerbaijan' },
     { id: 'marina-bay', name: 'Marina Bay Street Circuit', location: 'Singapore', available: true, category: 'f1', country: 'Singapore' },
     { id: 'americas', name: 'Circuit of the Americas', location: 'Austin', available: true, category: 'f1', country: 'USA' },
-    { id: 'rodriguez', name: 'AutΓö£Γöédromo Hermanos RodrΓö£┬íguez', location: 'Mexico City', available: true, category: 'f1', country: 'Mexico' },
-    { id: 'interlagos', name: 'AutΓö£Γöédromo JosΓö£ΓîÉ Carlos Pace', location: 'SΓö£├║o Paulo', available: true, category: 'f1', country: 'Brazil' },
+    { id: 'rodriguez', name: 'Autódromo Hermanos Rodríguez', location: 'Mexico City', available: true, category: 'f1', country: 'Mexico' },
+    { id: 'interlagos', name: 'Autódromo José Carlos Pace', location: 'São Paulo', available: true, category: 'f1', country: 'Brazil' },
     { id: 'vegas', name: 'Las Vegas Strip Circuit', location: 'Las Vegas', available: true, category: 'f1', country: 'USA' },
     { id: 'yas-marina', name: 'Yas Marina Circuit', location: 'Abu Dhabi', available: true, category: 'f1', country: 'UAE' }
   ], [])
