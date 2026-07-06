@@ -115,7 +115,7 @@ export default function StrategyPage() {
             <Target className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-white">MATLAB Predictive Strategy Engine</h1>
+            <h1 className="text-3xl font-extrabold tracking-tight text-white">Predictive Strategy Engine</h1>
             <p className="text-slate-400">Monte Carlo pit window sweeps and 3D track speed mapping</p>
           </div>
         </div>
@@ -238,7 +238,7 @@ export default function StrategyPage() {
           <div className="mt-8 pt-4 border-t border-slate-800 text-xs text-slate-400 flex items-start space-x-2">
             <Info className="w-4 h-4 text-violet-400 shrink-0" />
             <p>
-              Simulates randomized Safety Car timings, wreck liabilities, temperature drops, and human errors on pit stops using MATLAB's parallel computing sweep algorithms.
+              Simulates randomized Safety Car timings, wreck liabilities, temperature drops, and human errors on pit stops using parallel Monte Carlo sweep algorithms.
             </p>
           </div>
         </div>
@@ -307,7 +307,7 @@ export default function StrategyPage() {
             {mapLoading ? (
               <div className="h-96 flex flex-col items-center justify-center text-slate-400 bg-slate-950 rounded-xl border border-slate-800">
                 <Loader2 className="w-8 h-8 animate-spin text-indigo-500 mb-3" />
-                <span>Computing coordinate maps in MATLAB...</span>
+                <span>Computing coordinate maps...</span>
               </div>
             ) : mapHtml ? (
               <div className="w-full h-96 rounded-xl overflow-hidden border border-slate-800">

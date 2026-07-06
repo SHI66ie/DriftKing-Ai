@@ -6,11 +6,11 @@ logger = logging.getLogger("mat_tyre_models")
 
 class TyreDegradationSimulator:
     def __init__(self):
-        logger.info("Initializing MATLAB Tyre Degradation Simulation Engine...")
+        logger.info("Initializing Tyre Degradation Simulation Engine...")
 
     def predict_deg(self, compound, track_temp, lap, fuel_load=50.0, safety_car_laps=None):
         """
-        Calculates tyre degradation and grip levels. Matches the MATLAB predict_deg.m implementation.
+        Calculates tyre degradation and grip levels using an exponential thermal-wear model.
         """
         if safety_car_laps is None:
             safety_car_laps = []

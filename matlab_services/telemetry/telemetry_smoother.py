@@ -4,22 +4,6 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("telemetry_smoother")
 
-# Global MATLAB Engine reference
-_ml_engine = None
-
-def get_matlab_engine():
-    global _ml_engine
-    if _ml_engine is None:
-        try:
-            import matlab.engine
-            logger.info("Starting MATLAB Engine for Telemetry Curve Smoothing...")
-            _ml_engine = matlab.engine.start_matlab()
-            logger.info("MATLAB Engine started successfully.")
-        except Exception as e:
-            logger.warning(f"MATLAB Engine could not be loaded: {e}. Falling back to NumPy-based filters.")
-            _ml_engine = False
-    return _ml_engine
-
 def numpy_pchip_interpolate(x, y, x_new):
     """
     Custom 1D Piecewise Cubic Hermite Interpolating Polynomial (PCHIP) using NumPy.
@@ -90,49 +74,15 @@ def numpy_savgol_filter(y, window_size=11, polyorder=3):
 def smooth_telemetry(time_seq, throttle_seq, brake_seq, speed_seq=None):
     """
     Smooths throttle and brake telemetry arrays while strictly preserving peaks.
-    If MATLAB Engine is present, uses 'interp1' with 'pchip' and 'sgolayfilt'.
-    Otherwise, falls back to a custom NumPy implementation.
+    Uses PCHIP interpolation and Savitzky-Golay filtering via NumPy.
     """
     t = np.array(time_seq, dtype=float)
     throttle = np.array(throttle_seq, dtype=float)
     brake = np.array(brake_seq, dtype=float)
     
-    # We want a high-resolution time grid for interpolation
+    # High-resolution time grid for interpolation
     t_smooth = np.linspace(t[0], t[-1], len(t) * 2)
 
-    engine = get_matlab_engine()
-    
-    if engine:
-        try:
-            import matlab
-            t_ml = matlab.double(t.tolist())
-            throttle_ml = matlab.double(throttle.tolist())
-            brake_ml = matlab.double(brake.tolist())
-            t_smooth_ml = matlab.double(t_smooth.tolist())
-            
-            throttle_pchip = engine.interp1(t_ml, throttle_ml, t_smooth_ml, 'pchip')
-            brake_pchip = engine.interp1(t_ml, brake_ml, t_smooth_ml, 'pchip')
-            
-            throttle_smooth = np.array(throttle_pchip).flatten().tolist()
-            brake_smooth = np.array(brake_pchip).flatten().tolist()
-            
-            framelen = 11
-            if len(throttle_smooth) > framelen:
-                throttle_smooth = engine.sgolayfilt(matlab.double(throttle_smooth), 3, framelen)
-                brake_smooth = engine.sgolayfilt(matlab.double(brake_smooth), 3, framelen)
-                throttle_smooth = np.array(throttle_smooth).flatten().tolist()
-                brake_smooth = np.array(brake_smooth).flatten().tolist()
-                
-            return {
-                "time": t_smooth.tolist(),
-                "throttle": throttle_smooth,
-                "brake": brake_smooth,
-                "engine": "MATLAB Engine"
-            }
-        except Exception as err:
-            logger.error(f"MATLAB execution failed: {err}. Redirecting to NumPy fallback.")
-            
-    # NumPy Fallback (Always available, zero-dependency)
     try:
         throttle_interp = numpy_pchip_interpolate(t, throttle, t_smooth)
         brake_interp = numpy_pchip_interpolate(t, brake, t_smooth)
@@ -155,7 +105,7 @@ def smooth_telemetry(time_seq, throttle_seq, brake_seq, speed_seq=None):
             "engine": "NumPy Native Engine"
         }
     except Exception as fallback_err:
-        logger.error(f"NumPy fallback failed: {fallback_err}")
+        logger.error(f"NumPy smoothing failed: {fallback_err}")
         return {
             "time": t.tolist(),
             "throttle": throttle.tolist(),

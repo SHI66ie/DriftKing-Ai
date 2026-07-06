@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
 
     console.log(`⚙️ Using ${useGroq ? 'Groq' : 'Gemini'} for strategy optimization...`)
 
-    // 1. Fetch simulation results from the MATLAB/Python microservice
+    // 1. Fetch simulation results from the Python microservice
     let simulationResult = null;
     let tyreGripCurve: { lap: number; grip: number }[] = [];
     
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
       })).filter((item): item is { lap: number; grip: number } => item.grip !== null);
 
     } catch (e) {
-      console.warn("⚠️ MATLAB microservice offline, proceeding with AI standalone prediction:", e);
+      console.warn("⚠️ Strategy microservice offline, proceeding with AI standalone prediction:", e);
     }
 
     const prompt = `You are a Toyota GR Cup race strategist. Optimize race strategy:
@@ -115,14 +115,14 @@ Weather: ${JSON.stringify(weather)}
 Tire Compound: ${tireCompound || 'Medium'}
 Fuel Load: ${fuelLoad || 'Full'}
 
-${simulationResult ? `MATLAB MONTE CARLO SIMULATION RESULTS:
+${simulationResult ? `MONTE CARLO SIMULATION RESULTS:
 - Simulation Engine: ${simulationResult.engine}
 - Optimal Pit Stop Lap: Lap ${simulationResult.optimal_pit_lap}
 - Projected Total Race Time: ${simulationResult.optimal_race_time.toFixed(2)} seconds
 - Sweep Results: Pit Laps Swept [${simulationResult.sweep_laps.join(', ')}]
 - Risk Standard Deviation: ${simulationResult.risk_std.map((r: number) => r.toFixed(2)).join(', ')}
 
-PROJECTED TYRE GRIP CURVE (MATLAB Core Temperature wear model):
+PROJECTED TYRE GRIP CURVE (Core Temperature wear model):
 ${tyreGripCurve.map(t => `Lap ${t.lap}: Grip ${(t.grip * 100).toFixed(1)}%`).join(', ')}
 ` : ''}
 
@@ -136,7 +136,7 @@ ${lapTimes?.slice(0, 10).map((l: any) => l.lapTime || l.time).join(', ')}
 
 Provide strategic recommendations:
 
-1. **Optimal Pit Window**: When to pit (lap range with reasoning, referencing the MATLAB simulation results if available)
+1. **Optimal Pit Window**: When to pit (lap range with reasoning, referencing the simulation results if available)
 2. **Tire Strategy**: Compound selection and management (reference the projected Tyre Grip Curve)
 3. **Fuel Strategy**: Optimal fuel load vs lap time trade-off
 4. **Weather Strategy**: Adjustments for conditions
@@ -145,7 +145,7 @@ Provide strategic recommendations:
 7. **Position-Specific Tactics**: Lead vs chase vs holding position
 8. **Contingency Plans**: Alternative strategies if conditions change
 
-Provide data-driven, specific recommendations with confidence levels. Include the MATLAB simulation parameters and output directly in your strategic response to highlight the mathematical justification.`
+Provide data-driven, specific recommendations with confidence levels. Include the Monte Carlo simulation parameters and output directly in your strategic response to highlight the mathematical justification.`
 
 
     let strategy = ''

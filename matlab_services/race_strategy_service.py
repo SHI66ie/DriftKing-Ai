@@ -93,36 +93,6 @@ class MicroserviceHandler(BaseHTTPRequestHandler):
             pit_stop_loss = float(data.get("pit_stop_loss", 22.0))
             num_simulations = int(data.get("num_simulations", 1000))
 
-            # Look for MATLAB Engine
-            try:
-                import matlab.engine
-                eng = matlab.engine.start_matlab()
-                eng.addpath(os.path.abspath(os.path.join(os.path.dirname(__file__), 'strategy')))
-                res_ml = eng.monte_carlo_strategy(
-                    float(num_laps),
-                    float(track_temp),
-                    float(base_lap_time),
-                    float(fuel_effect),
-                    float(pit_stop_loss),
-                    float(num_simulations)
-                )
-                eng.quit()
-                
-                # Transform matlab struct to dict
-                output = {
-                    "sweep_laps": list(res_ml['sweep_laps'][0]),
-                    "mean_race_times": list(res_ml['mean_race_times'][0]),
-                    "risk_std": list(res_ml['risk_std'][0]),
-                    "optimal_pit_lap": int(res_ml['optimal_pit_lap']),
-                    "optimal_race_time": float(res_ml['optimal_race_time']),
-                    "engine": "MATLAB Parallel Toolbox (parfor)"
-                }
-                self._set_headers(200)
-                self.wfile.write(json.dumps(output).encode('utf-8'))
-                return
-            except Exception:
-                pass
-
             # Python parallel sweep fallback
             sweep_laps = list(range(5, num_laps - 4))
             
@@ -251,7 +221,7 @@ class MicroserviceHandler(BaseHTTPRequestHandler):
 def run_server(port=8000):
     server_address = ('', port)
     httpd = HTTPServer(server_address, MicroserviceHandler)
-    print(f"Kobayashi-Ai MATLAB/Python microservice running on port {port}...")
+    print(f"Kobayashi-Ai Python microservice running on port {port}...")
     httpd.serve_forever()
 
 if __name__ == '__main__':
