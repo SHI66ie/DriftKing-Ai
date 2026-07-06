@@ -716,7 +716,7 @@ export default function F1Page() {
       // Go through tracks in chronological order and find their practice sessions
       tracks.forEach(track => {
         const trackPracticeSessions = apiSessions.filter(s => 
-          (s.session_type.includes('Practice') || s.session_type.includes('Testing')) &&
+          (s.session_type?.includes('Practice') || s.session_type?.includes('Testing')) &&
           (s.circuit_short_name === track.name || 
            s.location === track.location ||
            s.country_name === track.country)
@@ -1129,7 +1129,7 @@ export default function F1Page() {
         const data = await response.json();
         if (data.success && data.races && data.races.length > 0) {
           // Normalize names for comparison: strip 'Grand Prix'/'GP', lowercase
-          const normalize = (s: string) => s.toLowerCase()
+          const normalize = (s: string) => (s || '').toLowerCase()
             .replace(/grand prix| grand prix| grandprix/gi, '').replace(/ gp$/i, '').replace(/[^a-z]/g, '').trim();
 
           const raceData = data.races.find((r: any) => {
@@ -1165,7 +1165,7 @@ export default function F1Page() {
               const year = 2026;
               const sessions = await hybridF1Api.getSessions(year);
               
-              const normalize = (s: string) => s.toLowerCase()
+              const normalize = (s: string) => (s || '').toLowerCase()
                 .replace(/grand prix| grand prix| grandprix/gi, '').replace(/ gp$/i, '').replace(/[^a-z]/g, '').trim();
                 
               const localName = normalize(race.name);
@@ -1666,10 +1666,10 @@ export default function F1Page() {
               const data = await res.json()
               if (data.success && data.races) {
                 const raceData = data.races.find((r: any) => 
-                  r.name.includes(selectedTrackInfo.name.replace(' GP', '')) || 
-                  selectedTrackInfo.name.includes(r.name.replace(' Grand Prix', '')) ||
-                  (selectedTrackInfo.location && r.circuit.includes(selectedTrackInfo.location)) ||
-                  (selectedTrackInfo.country && r.circuit.includes(selectedTrackInfo.country))
+                  (r.name?.includes(selectedTrackInfo.name.replace(' GP', '')) || 
+                  selectedTrackInfo.name.includes(r.name?.replace(' Grand Prix', '')) ||
+                  (selectedTrackInfo.location && r.circuit?.includes(selectedTrackInfo.location)) ||
+                  (selectedTrackInfo.country && r.circuit?.includes(selectedTrackInfo.country)))
                 )
                 if (raceData && raceData.results) {
                   trackSpecificData.raceResults = [{
@@ -2790,7 +2790,7 @@ export default function F1Page() {
                   },
                   {
                     label: "Top 10 Sleeper",
-                    driver: useRealData && apiDrivers.length > 0 ? (apiDrivers.find(d => d.name.toLowerCase().includes('hulk'))?.name || apiDrivers[9]?.name || "Nico HΓö£Γò¥lkenberg") : "Nico HΓö£Γò¥lkenberg",
+                    driver: useRealData && apiDrivers.length > 0 ? (apiDrivers.find(d => d.name?.toLowerCase().includes('hulk'))?.name || apiDrivers[9]?.name || "Nico HΓö£Γò¥lkenberg") : "Nico HΓö£Γò¥lkenberg",
                     prob: "48%",
                     edge: "+12.4%",
                     color: "border-green-500/30",
@@ -4187,7 +4187,7 @@ export default function F1Page() {
               
               {recordStatus && (
                 <div className="mt-4 p-2 bg-racing-blue/10 border border-racing-blue/30 rounded-lg text-center animate-in fade-in slide-in-from-top-2">
-                  <span className={`text-xs font-bold ${recordStatus.includes('Error') ? 'text-racing-red' : 'text-racing-blue'}`}>
+                  <span className={`text-xs font-bold ${recordStatus?.includes('Error') ? 'text-racing-red' : 'text-racing-blue'}`}>
                     {recordStatus}
                   </span>
                 </div>
