@@ -7,6 +7,7 @@ interface Driver {
   driver: string
   driverCode: string
   team: string
+  teamColor?: string
   nationality: string
   countryFlag: string
   points: number
@@ -18,6 +19,7 @@ interface Driver {
 interface Constructor {
   position: number
   team: string
+  teamColor?: string
   nationality: string
   countryFlag: string
   points: number
@@ -36,86 +38,92 @@ interface StandingsResponse {
   totalTeams?: number
   error?: string
   message?: string
+  source?: string
 }
 
-export function useF1Standings(season: string = '2026') {
+export function useF1Standings(season: string = '2025') {
   const [driverStandings, setDriverStandings] = useState<Driver[]>([])
   const [constructorStandings, setConstructorStandings] = useState<Constructor[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<string>('')
+  const [actualSeason, setActualSeason] = useState<string>(season)
+  const [dataNote, setDataNote] = useState<string>('')
+  const [isLiveData, setIsLiveData] = useState<boolean>(false)
 
-  const fetchStandings = async () => {
+  const fetchStandings = async (targetSeason: string, isRetry = false) => {
     try {
       setLoading(true)
-      setError(null)
-
-      // Fetch driver standings
-      const driverResponse = await fetch(`/api/f1/standings?season=${season}&type=drivers`)
-      if (!driverResponse.ok) {
-        throw new Error('Failed to fetch driver standings')
+      if (!isRetry) {
+        setError(null)
+        setDataNote('')
       }
+
+      const driverResponse = await fetch(`/api/f1/standings?season=${targetSeason}&type=drivers`)
+      if (!driverResponse.ok) throw new Error('Driver standings fetch failed')
+      
       const driverData: StandingsResponse = await driverResponse.json()
+      if (!driverData.success) throw new Error(driverData.error || 'Driver standings error')
 
-      if (!driverData.success) {
-        throw new Error(driverData.error || 'Failed to fetch driver standings')
-      }
-
-      // Fetch constructor standings
-      const constructorResponse = await fetch(`/api/f1/standings?season=${season}&type=constructors`)
-      if (!constructorResponse.ok) {
-        throw new Error('Failed to fetch constructor standings')
-      }
+      const constructorResponse = await fetch(`/api/f1/standings?season=${targetSeason}&type=constructors`)
+      if (!constructorResponse.ok) throw new Error('Constructor standings fetch failed')
+      
       const constructorData: StandingsResponse = await constructorResponse.json()
+      if (!constructorData.success) throw new Error(constructorData.error || 'Constructor standings error')
 
-      if (!constructorData.success) {
-        throw new Error(constructorData.error || 'Failed to fetch constructor standings')
-      }
-
+      // Success path - real data
       setDriverStandings(driverData.standings as Driver[])
       setConstructorStandings(constructorData.standings as Constructor[])
       setLastUpdated(driverData.lastUpdated)
+      setActualSeason(targetSeason)
+      setIsLiveData(true)
+
+      if (targetSeason !== season) {
+        setDataNote(`Showing ${targetSeason} data — ${season} standings not yet available`)
+      }
 
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred'
-      console.error('Error fetching F1 standings:', errorMessage)
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+      console.error('[useF1Standings] Error:', errorMessage)
+
+      // Auto fallback for future seasons
+      if (!isRetry && (targetSeason === '2026' || targetSeason === '2025')) {
+        console.log('[useF1Standings] Falling back to 2024 for real data')
+        return fetchStandings('2024', true)
+      }
+
+      // Only use mock as absolute last resort
       setError(errorMessage)
+      setIsLiveData(false)
+      setDataNote('Using demo data — live API unavailable')
       
-      // Set fallback data to prevent complete failure
       setDriverStandings([
-        { position: 1, driver: 'G. Russell', driverCode: 'RUS', team: 'Mercedes', nationality: 'United Kingdom', countryFlag: '🇬🇧', points: 75, wins: 3, podiums: 3 },
-        { position: 2, driver: 'A.K. Antonelli', driverCode: 'ANT', team: 'Mercedes', nationality: 'Italy', countryFlag: '🇮🇹', points: 54, wins: 0, podiums: 3 },
-        { position: 3, driver: 'C. Leclerc', driverCode: 'LEC', team: 'Ferrari', nationality: 'Monaco', countryFlag: '🇲🇨', points: 45, wins: 0, podiums: 3 },
-        { position: 4, driver: 'L. Hamilton', driverCode: 'HAM', team: 'Ferrari', nationality: 'United Kingdom', countryFlag: '🇬🇧', points: 36, wins: 0, podiums: 0 },
-        { position: 5, driver: 'L. Norris', driverCode: 'NOR', team: 'McLaren', nationality: 'United Kingdom', countryFlag: '🇬🇧', points: 30, wins: 0, podiums: 0 }
+        { position: 1, driver: 'Max Verstappen', driverCode: 'VER', team: 'Red Bull', teamColor: '#1E41FF', nationality: 'Netherlands', countryFlag: '🇳🇱', points: 437, wins: 9, podiums: 14 },
+        { position: 2, driver: 'Lando Norris', driverCode: 'NOR', team: 'McLaren', teamColor: '#FF8700', nationality: 'United Kingdom', countryFlag: '🇬🇧', points: 374, wins: 3, podiums: 12 },
+        { position: 3, driver: 'Charles Leclerc', driverCode: 'LEC', team: 'Ferrari', teamColor: '#DC143C', nationality: 'Monaco', countryFlag: '🇲🇨', points: 356, wins: 3, podiums: 11 },
       ])
-      
       setConstructorStandings([
-        { position: 1, team: 'Mercedes', nationality: 'Germany', countryFlag: '🇩🇪', points: 129, wins: 3, podiums: 6, drivers: ['G. Russell', 'A.K. Antonelli'] },
-        { position: 2, team: 'Ferrari', nationality: 'Italy', countryFlag: '🇮🇹', points: 81, wins: 0, podiums: 3, drivers: ['C. Leclerc', 'L. Hamilton'] },
-        { position: 3, team: 'McLaren', nationality: 'United Kingdom', countryFlag: '🇬🇧', points: 30, wins: 0, podiums: 0, drivers: ['L. Norris', 'O. Piastri'] },
-        { position: 4, team: 'Red Bull', nationality: 'Austria', countryFlag: '🇦🇹', points: 24, wins: 0, podiums: 0, drivers: ['M. Verstappen', 'I. Hadjar'] },
-        { position: 5, team: 'Haas', nationality: 'United States', countryFlag: '🇺🇸', points: 18, wins: 0, podiums: 0, drivers: ['O. Bearman', 'E. Ocon'] }
+        { position: 1, team: 'McLaren', teamColor: '#FF8700', nationality: 'United Kingdom', countryFlag: '🇬🇧', points: 666, wins: 5, podiums: 20, drivers: ['L. Norris', 'O. Piastri'] },
+        { position: 2, team: 'Ferrari', teamColor: '#DC143C', nationality: 'Italy', countryFlag: '🇮🇹', points: 652, wins: 5, podiums: 19, drivers: ['C. Leclerc', 'C. Sainz'] },
       ])
-      
       setLastUpdated(new Date().toISOString())
+      setActualSeason(targetSeason)
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchStandings()
+    fetchStandings(season)
   }, [season])
 
-  // Auto-refresh every 5 minutes during race weekends
+  // Auto refresh
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchStandings()
-    }, 5 * 60 * 1000) // 5 minutes
-
+      fetchStandings(actualSeason || season)
+    }, 5 * 60 * 1000)
     return () => clearInterval(interval)
-  }, [season])
+  }, [actualSeason, season])
 
   return {
     driverStandings,
@@ -123,26 +131,25 @@ export function useF1Standings(season: string = '2026') {
     loading,
     error,
     lastUpdated,
-    refetch: fetchStandings
+    actualSeason,
+    dataNote,
+    isLiveData,
+    refetch: () => fetchStandings(actualSeason || season)
   }
 }
 
-// Helper function to get top N drivers
-export function getTopDrivers(drivers: Driver[], count: number = 5): Driver[] {
-  return drivers.slice(0, count)
+export function getTopDrivers(drivers: Driver[], count: number = 10): Driver[] {
+  return [...drivers].sort((a, b) => a.position - b.position).slice(0, count)
 }
 
-// Helper function to get top N constructors
-export function getTopConstructors(constructors: Constructor[], count: number = 5): Constructor[] {
-  return constructors.slice(0, count)
+export function getTopConstructors(constructors: Constructor[], count: number = 10): Constructor[] {
+  return [...constructors].sort((a, b) => a.position - b.position).slice(0, count)
 }
 
-// Helper function to find driver by position
 export function findDriverByPosition(drivers: Driver[], position: number): Driver | undefined {
   return drivers.find(driver => driver.position === position)
 }
 
-// Helper function to find constructor by position
 export function findConstructorByPosition(constructors: Constructor[], position: number): Constructor | undefined {
   return constructors.find(constructor => constructor.position === position)
 }
