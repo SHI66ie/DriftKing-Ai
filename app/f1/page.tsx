@@ -106,7 +106,7 @@ export default function F1Page() {
     { id: 'villeneuve', name: 'Canadian GP', date: 'June 13-15, 2026', track: 'Circuit Gilles Villeneuve', country: 'Canada', leader: 'Lando Norris', format: 'Standard' },
     { id: 'catalunya', name: 'Spanish GP', date: 'June 20-22, 2026', track: 'Circuit de Barcelona-Catalunya', country: 'Spain', leader: 'Max Verstappen', format: 'Standard' },
     { id: 'redbull-ring', name: 'Austrian GP', date: 'June 27-29, 2026', track: 'Red Bull Ring', country: 'Austria', leader: 'Max Verstappen', format: 'Sprint' },
-    { id: 'silverstone', name: 'British GP', date: 'July 4-6, 2026', track: 'Silverstone Circuit', country: 'UK', leader: 'Lewis Hamilton', format: 'Standard' },
+    { id: 'silverstone', name: 'British GP', date: 'July 3-5, 2026', track: 'Silverstone Circuit', country: 'UK', leader: 'Kimi Antonelli', format: 'Standard', recap: 'The British GP has concluded in a highly chaotic race featuring a bizarre finish under the Safety Car due to an FIA software error. Charles Leclerc won for Ferrari, breaking a massive 624-day winless streak after capitalizing on a poor start from pole-sitter Kimi Antonelli. George Russell claimed second, and Lewis Hamilton finished third. Championship leader Kimi Antonelli suffered a late technical failure (broken wheel-fairing/brake duct) and was demoted to 16th place after a penalty. Max Verstappen crashed out at Stowe on lap 48. The championship battle has tightened significantly, with Antonelli\'s lead over Russell slashed to 25 points.' },
     { id: 'hungaroring', name: 'Hungarian GP', date: 'July 25-27, 2026', track: 'Hungaroring', country: 'Hungary', leader: 'Max Verstappen', format: 'Standard' },
     { id: 'spa', name: 'Belgian GP', date: 'August 1-3, 2026', track: 'Circuit de Spa-Francorchamps', country: 'Belgium', leader: 'Charles Leclerc', format: 'Sprint' },
     { id: 'zandvoort', name: 'Dutch GP', date: 'August 29-31, 2026', track: 'Circuit Zandvoort', country: 'Netherlands', leader: 'Max Verstappen', format: 'Standard' },
@@ -167,7 +167,7 @@ export default function F1Page() {
       { date: 'March 6-8, 2026' }, { date: 'March 15, 2026' }, { date: 'March 29, 2026' },
       { date: 'April 12, 2026' }, { date: 'April 19, 2026' }, { date: 'May 3-5, 2026' },
       { date: 'May 17-18, 2026' }, { date: 'May 24-25, 2026' }, { date: 'June 13-15, 2026' },
-      { date: 'June 20-22, 2026' }, { date: 'June 27-29, 2026' }, { date: 'July 4-6, 2026' },
+      { date: 'June 20-22, 2026' }, { date: 'June 27-29, 2026' }, { date: 'July 3-5, 2026' },
       { date: 'July 25-27, 2026' }, { date: 'August 1-3, 2026' }, { date: 'August 29-31, 2026' },
       { date: 'September 5-7, 2026' }, { date: 'September 20-22, 2026' },
       { date: 'October 4-6, 2026' }, { date: 'October 18-20, 2026' }, { date: 'October 25-27, 2026' },
@@ -2995,6 +2995,16 @@ export default function F1Page() {
                               </div>
                             </div>
                           </div>
+
+                          {/* Race Recap (if exists) */}
+                          {(race as any).recap && (
+                            <div className="mt-6 ml-12 bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-gray-300 leading-relaxed group-hover:bg-white/10 transition-colors">
+                              <h5 className="text-[10px] font-black text-racing-red uppercase tracking-widest mb-2 flex items-center gap-2">
+                                <Brain className="w-3 h-3" /> Oracle Race Recap
+                              </h5>
+                              {(race as any).recap}
+                            </div>
+                          )}
 
                           {/* Expandable Standings Section (Reuse same logic) */}
                           {expandedRaceId === race.id && (
