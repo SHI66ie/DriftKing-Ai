@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense, Fragment } from 'react'
 import { Trophy, Zap, Target, Brain, Clock, Play, Pause, BarChart3, Download, Flag, TrendingUp, ArrowLeft, ArrowRight, Calendar, LayoutDashboard, Settings, Info, Cloud, Thermometer, Wind, Droplets, History, Database, Satellite, Activity, Eye } from 'lucide-react'
@@ -114,8 +114,8 @@ export default function F1Page() {
     { id: 'baku', name: 'Azerbaijan GP', date: 'September 19-21, 2026', track: 'Baku City Circuit', country: 'Azerbaijan', leader: 'Oscar Piastri', format: 'Sprint' },
     { id: 'marina-bay', name: 'Singapore GP', date: 'October 3-5, 2026', track: 'Marina Bay Street Circuit', country: 'Singapore', leader: 'Lando Norris', format: 'Standard' },
     { id: 'americas', name: 'United States GP', date: 'October 17-19, 2026', track: 'Circuit of the Americas', country: 'USA', leader: 'Max Verstappen', format: 'Standard' },
-    { id: 'rodriguez', name: 'Mexico City GP', date: 'October 24-26, 2026', track: 'Aut├│dromo Hermanos Rodr├¡guez', country: 'Mexico', leader: 'Max Verstappen', format: 'Standard' },
-    { id: 'interlagos', name: 'S├úo Paulo GP', date: 'November 7-9, 2026', track: 'Aut├│dromo Jos├⌐ Carlos Pace', country: 'Brazil', leader: 'Lando Norris', format: 'Sprint' },
+    { id: 'rodriguez', name: 'Mexico City GP', date: 'October 24-26, 2026', track: 'AutΓö£Γöédromo Hermanos RodrΓö£┬íguez', country: 'Mexico', leader: 'Max Verstappen', format: 'Standard' },
+    { id: 'interlagos', name: 'SΓö£├║o Paulo GP', date: 'November 7-9, 2026', track: 'AutΓö£Γöédromo JosΓö£ΓîÉ Carlos Pace', country: 'Brazil', leader: 'Lando Norris', format: 'Sprint' },
     { id: 'vegas', name: 'Las Vegas GP', date: 'November 21-23, 2026', track: 'Las Vegas Strip Circuit', country: 'USA', leader: 'Max Verstappen', format: 'Standard' },
     { id: 'yas-marina', name: 'Abu Dhabi GP', date: 'December 5-7, 2026', track: 'Yas Marina Circuit', country: 'UAE', leader: 'Max Verstappen', format: 'Standard' }
   ], [])
@@ -1257,29 +1257,29 @@ export default function F1Page() {
   // Helper function to get country flag emoji
   const getCountryFlag = (country: string) => {
     const flags: { [key: string]: string } = {
-      'Monaco': '≡ƒç▓≡ƒç¿',
-      'UK': '≡ƒç¼≡ƒçº',
-      'Belgium': '≡ƒçº≡ƒç¬',
-      'Italy': '≡ƒç«≡ƒç╣',
-      'Spain': '≡ƒç¬≡ƒç╕',
-      'Austria': '≡ƒçª≡ƒç╣',
-      'UAE': '≡ƒçª≡ƒç¬',
-      'Brazil': '≡ƒçº≡ƒç╖',
-      'Bahrain': '≡ƒçº≡ƒç¡',
-      'Saudi Arabia': '≡ƒç╕≡ƒçª',
-      'USA': '≡ƒç║≡ƒç╕',
-      'Hungary': '≡ƒç¡≡ƒç║',
-      'Netherlands': '≡ƒç│≡ƒç▒',
-      'Singapore': '≡ƒç╕≡ƒç¼',
-      'Japan': '≡ƒç»≡ƒç╡',
-      'China': '≡ƒç¿≡ƒç│',
-      'Azerbaijan': '≡ƒçª≡ƒç┐',
-      'Australia': '≡ƒçª≡ƒç║',
-      'Canada': '≡ƒç¿≡ƒçª',
-      'Mexico': '≡ƒç▓≡ƒç╜',
-      'Qatar': '≡ƒç╢≡ƒçª'
+      'Monaco': 'Γëí╞Æ├ºΓûôΓëí╞Æ├º┬┐',
+      'UK': 'Γëí╞Æ├º┬╝Γëí╞Æ├º┬║',
+      'Belgium': 'Γëí╞Æ├º┬║Γëí╞Æ├º┬¼',
+      'Italy': 'Γëí╞Æ├º┬½Γëí╞Æ├ºΓòú',
+      'Spain': 'Γëí╞Æ├º┬¼Γëí╞Æ├ºΓòò',
+      'Austria': 'Γëí╞Æ├º┬¬Γëí╞Æ├ºΓòú',
+      'UAE': 'Γëí╞Æ├º┬¬Γëí╞Æ├º┬¼',
+      'Brazil': 'Γëí╞Æ├º┬║Γëí╞Æ├ºΓòû',
+      'Bahrain': 'Γëí╞Æ├º┬║Γëí╞Æ├º┬í',
+      'Saudi Arabia': 'Γëí╞Æ├ºΓòòΓëí╞Æ├º┬¬',
+      'USA': 'Γëí╞Æ├ºΓòæΓëí╞Æ├ºΓòò',
+      'Hungary': 'Γëí╞Æ├º┬íΓëí╞Æ├ºΓòæ',
+      'Netherlands': 'Γëí╞Æ├ºΓöéΓëí╞Æ├ºΓûÆ',
+      'Singapore': 'Γëí╞Æ├ºΓòòΓëí╞Æ├º┬╝',
+      'Japan': 'Γëí╞Æ├º┬╗Γëí╞Æ├ºΓòí',
+      'China': 'Γëí╞Æ├º┬┐Γëí╞Æ├ºΓöé',
+      'Azerbaijan': 'Γëí╞Æ├º┬¬Γëí╞Æ├ºΓöÉ',
+      'Australia': 'Γëí╞Æ├º┬¬Γëí╞Æ├ºΓòæ',
+      'Canada': 'Γëí╞Æ├º┬┐Γëí╞Æ├º┬¬',
+      'Mexico': 'Γëí╞Æ├ºΓûôΓëí╞Æ├ºΓò£',
+      'Qatar': 'Γëí╞Æ├ºΓòóΓëí╞Æ├º┬¬'
     }
-    return flags[country] || '≡ƒÅü'
+    return flags[country] || 'Γëí╞Æ├à├╝'
   }
 
   // F1 Race Prediction Functions
@@ -1895,8 +1895,8 @@ export default function F1Page() {
             { id: 'azerbaijan-2024', name: 'Azerbaijan Grand Prix', date: '2024-09-15', track: 'Baku City Circuit' },
             { id: 'singapore-2024', name: 'Singapore Grand Prix', date: '2024-09-22', track: 'Marina Bay Street Circuit' },
             { id: 'united-states-2024', name: 'United States Grand Prix', date: '2024-10-20', track: 'Circuit of the Americas' },
-            { id: 'mexico-2024', name: 'Mexico City Grand Prix', date: '2024-10-27', track: 'Aut├│dromo Hermanos Rodr├¡guez' },
-            { id: 'brazil-2024', name: 'S├úo Paulo Grand Prix', date: '2024-11-03', track: 'Aut├│dromo Jos├⌐ Carlos Pace' },
+            { id: 'mexico-2024', name: 'Mexico City Grand Prix', date: '2024-10-27', track: 'AutΓö£Γöédromo Hermanos RodrΓö£┬íguez' },
+            { id: 'brazil-2024', name: 'SΓö£├║o Paulo Grand Prix', date: '2024-11-03', track: 'AutΓö£Γöédromo JosΓö£ΓîÉ Carlos Pace' },
             { id: 'vegas-2024', name: 'Las Vegas Grand Prix', date: '2024-11-23', track: 'Las Vegas Strip Circuit' },
             { id: 'abu-dhabi-2024', name: 'Abu Dhabi Grand Prix', date: '2024-12-08', track: 'Yas Marina Circuit' }
           ],
@@ -1920,8 +1920,8 @@ export default function F1Page() {
             { id: 'azerbaijan-2025', name: 'Azerbaijan Grand Prix', date: '2025-09-14', track: 'Baku City Circuit' },
             { id: 'singapore-2025', name: 'Singapore Grand Prix', date: '2025-09-21', track: 'Marina Bay Street Circuit' },
             { id: 'united-states-2025', name: 'United States Grand Prix', date: '2025-10-19', track: 'Circuit of the Americas' },
-            { id: 'mexico-2025', name: 'Mexico City Grand Prix', date: '2025-10-26', track: 'Aut├│dromo Hermanos Rodr├¡guez' },
-            { id: 'brazil-2025', name: 'S├úo Paulo Grand Prix', date: '2025-11-02', track: 'Aut├│dromo Jos├⌐ Carlos Pace' },
+            { id: 'mexico-2025', name: 'Mexico City Grand Prix', date: '2025-10-26', track: 'AutΓö£Γöédromo Hermanos RodrΓö£┬íguez' },
+            { id: 'brazil-2025', name: 'SΓö£├║o Paulo Grand Prix', date: '2025-11-02', track: 'AutΓö£Γöédromo JosΓö£ΓîÉ Carlos Pace' },
             { id: 'vegas-2025', name: 'Las Vegas Grand Prix', date: '2025-11-22', track: 'Las Vegas Strip Circuit' },
             { id: 'abu-dhabi-2025', name: 'Abu Dhabi Grand Prix', date: '2025-12-07', track: 'Yas Marina Circuit' }
           ],
@@ -2185,8 +2185,8 @@ export default function F1Page() {
     { id: 'baku', name: 'Baku City Circuit', location: 'Baku', available: true, category: 'f1', country: 'Azerbaijan' },
     { id: 'marina-bay', name: 'Marina Bay Street Circuit', location: 'Singapore', available: true, category: 'f1', country: 'Singapore' },
     { id: 'americas', name: 'Circuit of the Americas', location: 'Austin', available: true, category: 'f1', country: 'USA' },
-    { id: 'rodriguez', name: 'Aut├│dromo Hermanos Rodr├¡guez', location: 'Mexico City', available: true, category: 'f1', country: 'Mexico' },
-    { id: 'interlagos', name: 'Aut├│dromo Jos├⌐ Carlos Pace', location: 'S├úo Paulo', available: true, category: 'f1', country: 'Brazil' },
+    { id: 'rodriguez', name: 'AutΓö£Γöédromo Hermanos RodrΓö£┬íguez', location: 'Mexico City', available: true, category: 'f1', country: 'Mexico' },
+    { id: 'interlagos', name: 'AutΓö£Γöédromo JosΓö£ΓîÉ Carlos Pace', location: 'SΓö£├║o Paulo', available: true, category: 'f1', country: 'Brazil' },
     { id: 'vegas', name: 'Las Vegas Strip Circuit', location: 'Las Vegas', available: true, category: 'f1', country: 'USA' },
     { id: 'yas-marina', name: 'Yas Marina Circuit', location: 'Abu Dhabi', available: true, category: 'f1', country: 'UAE' }
   ], [])
@@ -2362,7 +2362,7 @@ export default function F1Page() {
         'Track: ' + (tracks.find(t => t.id === selectedTrack)?.name || selectedTrack) + '\n' +
         'Race: ' + selectedRace + '\n' +
         'Generated: ' + new Date().toLocaleString() + '\n\n' +
-        'ΓÜá∩╕Å AI Analysis Unavailable\n' +
+        '╬ô├£├íΓê⌐Γòò├à AI Analysis Unavailable\n' +
         (error.message || 'Could not connect to AI service')
 
       setGeneratedReport(report)
@@ -2575,7 +2575,7 @@ export default function F1Page() {
                     {nextEvent ? (
                       <span className="text-5xl md:text-6xl">{getCountryFlag(nextEvent.country_name)}</span>
                     ) : (
-                      <span className="text-5xl md:text-6xl">≡ƒçª≡ƒç║</span>
+                      <span className="text-5xl md:text-6xl">Γëí╞Æ├º┬¬Γëí╞Æ├ºΓòæ</span>
                     )}
                   </div>
                   <button
@@ -2759,7 +2759,7 @@ export default function F1Page() {
 
               <div className="mt-4 text-center">
                 <p className="text-xs text-gray-500">
-                  Times shown in local timezone ΓÇó Sessions typically 1-2 hours duration
+                  Times shown in local timezone ╬ô├ç├│ Sessions typically 1-2 hours duration
                 </p>
               </div>
             </div>
@@ -2790,7 +2790,7 @@ export default function F1Page() {
                   },
                   {
                     label: "Top 10 Sleeper",
-                    driver: useRealData && apiDrivers.length > 0 ? (apiDrivers.find(d => d.name.toLowerCase().includes('hulk'))?.name || apiDrivers[9]?.name || "Nico H├╝lkenberg") : "Nico H├╝lkenberg",
+                    driver: useRealData && apiDrivers.length > 0 ? (apiDrivers.find(d => d.name.toLowerCase().includes('hulk'))?.name || apiDrivers[9]?.name || "Nico HΓö£Γò¥lkenberg") : "Nico HΓö£Γò¥lkenberg",
                     prob: "48%",
                     edge: "+12.4%",
                     color: "border-green-500/30",
@@ -2883,9 +2883,9 @@ export default function F1Page() {
                                   <Flag className="w-4 h-4" />
                                   <span>{race.track}</span>
                                 </div>
-                                <span className="text-gray-700">ΓÇó</span>
+                                <span className="text-gray-700">╬ô├ç├│</span>
                                 <span className="text-lg">{getCountryFlag(race.country)}</span>
-                                <span className="text-gray-700">ΓÇó</span>
+                                <span className="text-gray-700">╬ô├ç├│</span>
                                 <span>{race.date}</span>
                               </div>
                             </div>
@@ -2978,7 +2978,7 @@ export default function F1Page() {
                                   onClick={(e) => { e.stopPropagation(); handleViewSession(race.id, 'all'); }}
                                   className="text-[10px] font-black text-racing-blue uppercase hover:underline"
                                 >
-                                  Full Matrix ΓåÆ
+                                  Full Matrix ╬ô├Ñ├å
                                 </button>
                               </div>
                               
@@ -3067,9 +3067,9 @@ export default function F1Page() {
                               <Flag className="w-4 h-4" />
                               <span className="font-medium">{race.track}</span>
                             </div>
-                            <span className="text-gray-600">ΓÇó</span>
+                            <span className="text-gray-600">╬ô├ç├│</span>
                             <span className="text-lg">{getCountryFlag(race.country)}</span>
-                            <span className="text-gray-600">ΓÇó</span>
+                            <span className="text-gray-600">╬ô├ç├│</span>
                             <span className="font-medium">{race.date}</span>
                           </div>
                         </div>
@@ -3121,7 +3121,7 @@ export default function F1Page() {
                               onClick={(e) => { e.stopPropagation(); handleViewSession(race.id, 'all'); }}
                               className="text-[10px] font-black text-racing-blue uppercase hover:underline"
                             >
-                              View Full Matrix ΓåÆ
+                              View Full Matrix ╬ô├Ñ├å
                             </button>
                           </div>
                           
@@ -3172,7 +3172,7 @@ export default function F1Page() {
                   onClick={() => setActiveTab('analytics')}
                   className="px-6 py-3 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700 rounded-xl text-sm font-medium text-gray-400 hover:text-white transition-colors"
                 >
-                  View Full Schedule ΓåÆ
+                  View Full Schedule ╬ô├Ñ├å
                 </button>
               </div>
             </div>
@@ -3386,7 +3386,7 @@ export default function F1Page() {
                     className="flex-1 sm:flex-none px-4 py-2.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg transition-all flex items-center justify-center space-x-2 font-bold text-xs uppercase tracking-wider"
                   >
                     <span>{showF1DataInput ? 'Hide' : 'Show'} Form</span>
-                    <span className={`transform transition-transform duration-200 ${showF1DataInput ? 'rotate-180' : ''}`}>Γû╝</span>
+                    <span className={`transform transition-transform duration-200 ${showF1DataInput ? 'rotate-180' : ''}`}>╬ô├╗Γò¥</span>
                   </button>
                 </div>
               </div>
@@ -3573,7 +3573,7 @@ export default function F1Page() {
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
                       <div className="space-y-2">
-                        <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Air Temp (┬░C)</label>
+                        <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Air Temp (Γö¼ΓûæC)</label>
                         <input
                           type="number"
                           value={f1Data.airTemp}
@@ -3583,7 +3583,7 @@ export default function F1Page() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Track Temp (┬░C)</label>
+                        <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Track Temp (Γö¼ΓûæC)</label>
                         <input
                           type="number"
                           value={f1Data.trackTemp}
@@ -4217,7 +4217,7 @@ export default function F1Page() {
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h3 className="text-xl font-bold">Lap Time Variance</h3>
-                  <p className="text-sm text-gray-500">Stints Analysis ΓÇó 2026 Simulation Parameters</p>
+                  <p className="text-sm text-gray-500">Stints Analysis ╬ô├ç├│ 2026 Simulation Parameters</p>
                 </div>
                 <div className="flex space-x-2">
                   <span className="px-3 py-1 bg-racing-red/10 border border-racing-red/20 text-racing-red text-[10px] font-black rounded-full uppercase">Live Telemetry</span>
@@ -4246,7 +4246,7 @@ export default function F1Page() {
                       itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
                     />
                     <Legend verticalAlign="top" height={36} iconType="circle" />
-                    <Line type="monotone" dataKey="p1" name="H├╝lkenberg (P1)" stroke="#e10600" strokeWidth={3} dot={{ r: 4, fill: '#e10600', strokeWidth: 0 }} activeDot={{ r: 6 }} />
+                    <Line type="monotone" dataKey="p1" name="HΓö£Γò¥lkenberg (P1)" stroke="#e10600" strokeWidth={3} dot={{ r: 4, fill: '#e10600', strokeWidth: 0 }} activeDot={{ r: 6 }} />
                     <Line type="monotone" dataKey="p2" name="Verstappen (P2)" stroke="#1e40af" strokeWidth={2} strokeDasharray="5 5" dot={false} />
                     <Line type="monotone" dataKey="p3" name="Leclerc (P3)" stroke="#ef4444" strokeWidth={2} strokeDasharray="3 3" dot={false} />
                     <Line type="monotone" dataKey="p4" name="Norris (P4)" stroke="#ff8000" strokeWidth={2} strokeDasharray="4 4" dot={false} />
@@ -4356,7 +4356,7 @@ export default function F1Page() {
                         <Thermometer className="w-3 h-3 mr-1" />
                         Air Temp
                       </div>
-                      <div className="text-2xl font-mono font-bold text-white">24.5┬░C</div>
+                      <div className="text-2xl font-mono font-bold text-white">24.5Γö¼ΓûæC</div>
                     </div>
                     <div className="space-y-1">
                       <div className="flex items-center text-gray-400 text-xs mb-1">
@@ -4377,7 +4377,7 @@ export default function F1Page() {
                         <Cloud className="w-3 h-3 mr-1" />
                         Track
                       </div>
-                      <div className="text-2xl font-mono font-bold text-white">38.2┬░C</div>
+                      <div className="text-2xl font-mono font-bold text-white">38.2Γö¼ΓûæC</div>
                     </div>
                   </div>
                 </div>
